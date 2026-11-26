@@ -1,15 +1,17 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button, Text, TextInput } from 'react-native-paper';
 import { z } from 'zod';
 
 import { ErrorText } from '@/components/ErrorText';
 import { Screen } from '@/components/Screen';
+import { env } from '@/lib/env';
 import { errorKey } from '@/lib/errors';
 import { useSessionStore } from '@/stores/session';
 
-import { sendCode } from '../api';
+import { sendCode, signInWithGoogle } from '../api';
+import { Captcha } from '../Captcha';
 
 const emailSchema = z.string().trim().toLowerCase().pipe(z.email());
 
@@ -22,6 +24,18 @@ export function LoginScreen() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const methods = society?.login_methods ?? ['email_otp'];
+  const siteKey = env.EXPO_PUBLIC_TURNSTILE_SITE_KEY;
+  const [captchaToken, setCaptchaToken] = useState<string | undefined>(undefined);
+  const onToken = useCallback((token: string) => setCaptchaToken(token), []);
+
+  async function google() {
+    setError(null);
+    try {
+      await signInWithGoogle();
+    } catch (e) {
+      setError(t(errorKey(e)));
+    }
+  }
 
   async function submit() {
     setError(null);
@@ -30,9 +44,13 @@ export function LoginScreen() {
       setError(t('login.invalidEmail'));
       return;
     }
+    if (siteKey && !captchaToken) {
+      setError(t('login.captchaRequired'));
+      return;
+    }
     setBusy(true);
     try {
-      await sendCode(parsed.data, undefined);
+      await sendCode(parsed.data, captchaToken);
       router.push({ pathname: '/verify', params: { email: parsed.data } });
     } catch (e) {
       setError(t(errorKey(e)));
@@ -60,6 +78,7 @@ export function LoginScreen() {
             keyboardType="email-address"
             onSubmitEditing={submit}
           />
+          {siteKey ? <Captcha siteKey={siteKey} onToken={onToken} /> : null}
           <ErrorText message={error} />
           <Button mode="contained" onPress={submit} loading={busy} disabled={busy}>
             {t('login.sendCode')}
@@ -67,7 +86,7 @@ export function LoginScreen() {
         </>
       ) : null}
       {methods.includes('google') ? (
-        <Button mode="outlined" icon="google" onPress={() => router.push('/google')}>
+        <Button mode="outlined" icon="google" onPress={() => void google()}>
           {t('login.google')}
         </Button>
       ) : null}

@@ -37,7 +37,8 @@
     "resend": "Send a new code",
     "differentEmail": "Use a different email",
     "changeSociety": "Change society",
-    "invalidEmail": "Enter a valid email address"
+    "invalidEmail": "Enter a valid email address",
+    "captchaRequired": "Complete the security check above first."
   },
   "membership": {
     "checking": "Checking your membership…",

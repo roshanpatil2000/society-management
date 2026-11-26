@@ -37,7 +37,8 @@
     "resend": "नवीन कोड पाठवा",
     "differentEmail": "दुसरा ईमेल वापरा",
     "changeSociety": "सोसायटी बदला",
-    "invalidEmail": "वैध ईमेल पत्ता टाका"
+    "invalidEmail": "वैध ईमेल पत्ता टाका",
+    "captchaRequired": "आधी वरील सुरक्षा तपासणी पूर्ण करा."
   },
   "membership": {
     "checking": "तुमचे सदस्यत्व तपासत आहे…",

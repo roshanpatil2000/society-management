@@ -14,6 +14,26 @@ import { params, router } from '@/test/router-mock';
 
 jest.mock('expo-router', () => require('@/test/router-mock').routerMock);
 jest.mock('@/features/auth/api');
+const mockCaptcha = { siteKey: undefined as string | undefined };
+jest.mock('@/lib/env', () => ({
+  env: {
+    EXPO_PUBLIC_SUPABASE_URL: 'http://127.0.0.1:54321',
+    EXPO_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key-not-a-real-key',
+    get EXPO_PUBLIC_TURNSTILE_SITE_KEY() {
+      return mockCaptcha.siteKey;
+    },
+  },
+}));
+jest.mock('@/features/auth/Captcha', () => {
+  const { Pressable, Text } = require('react-native');
+  return {
+    Captcha: ({ onToken }: { onToken: (t: string) => void }) => (
+      <Pressable onPress={() => onToken('captcha-token-1')}>
+        <Text>Solve captcha</Text>
+      </Pressable>
+    ),
+  };
+});
 const mocked = jest.mocked(api);
 
 const greenPark = {
@@ -110,6 +130,37 @@ describe('LoginScreen', () => {
     await fireEvent.changeText(screen.getByLabelText('Email address'), 'stranger@example.com');
     await fireEvent.press(screen.getByText('Email me a sign-in code'));
     expect(await screen.findByText(/isn't registered with any society/)).toBeTruthy();
+  });
+
+  it('signs in with Google from the login screen', async () => {
+    mocked.signInWithGoogle.mockResolvedValue('signed-in');
+    await renderScreen(<LoginScreen />);
+    await fireEvent.press(screen.getByText('Continue with Google'));
+    await waitFor(() => expect(mocked.signInWithGoogle).toHaveBeenCalled());
+  });
+
+  it('shows the Google error when the Google email has no invite', async () => {
+    mocked.signInWithGoogle.mockRejectedValue({
+      message: "This email isn't registered with any society. Ask your committee.",
+    });
+    await renderScreen(<LoginScreen />);
+    await fireEvent.press(screen.getByText('Continue with Google'));
+    expect(await screen.findByText(/isn't registered with any society/)).toBeTruthy();
+  });
+
+  it('with CAPTCHA on, waits for the CAPTCHA and sends its token with the email', async () => {
+    mockCaptcha.siteKey = 'site-key';
+    mocked.sendCode.mockResolvedValue(undefined);
+    await renderScreen(<LoginScreen />);
+    await fireEvent.changeText(screen.getByLabelText('Email address'), 'ravi@example.com');
+    await fireEvent.press(screen.getByText('Email me a sign-in code'));
+    expect(mocked.sendCode).not.toHaveBeenCalled();
+    await fireEvent.press(screen.getByText('Solve captcha'));
+    await fireEvent.press(screen.getByText('Email me a sign-in code'));
+    await waitFor(() =>
+      expect(mocked.sendCode).toHaveBeenCalledWith('ravi@example.com', 'captcha-token-1'),
+    );
+    mockCaptcha.siteKey = undefined;
   });
 
   it('can go back to choose another society', async () => {

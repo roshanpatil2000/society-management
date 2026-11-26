@@ -575,7 +575,8 @@ Build one milestone at a time, in this order, and don't start the next until its
 - Admin section of the web build, shown only to platform admins: onboard a society with its committee and society code (calls `admin-onboard-society`; suggests a code from the name with `suggestSocietySlug`), list societies, change status, quotas and code, and print the society's QR code for the notice board.
 - Permission-driven tab bar, `usePermission` and `<Can>`; Home and Profile; society switching; i18n set up with English, plus Marathi and Hindi string files.
 - `device` table and push-token registration.
-- **Done when:** logging in as a member, a treasurer and a staff user shows three different tab sets from the same build, on Android and on web.
+- Built as: `resolveGate` (one function decides discovery, login, invite, not-a-member, consent, picker, admin or app) applied by `AuthGate`; session in the device secure store (chunked) or localStorage on web; permissions re-read from the server on every society switch and never stored; at most five tabs on phones, the rest under More; Google sign-in through Supabase OAuth (browser sheet on phones, redirect on web); Turnstile shown only when `EXPO_PUBLIC_TURNSTILE_SITE_KEY` is set; consent recorded in `profiles.consent_version` via `accept_consent`; devices via `register_device` / `unregister_device`.
+- **Done when:** logging in as a member, a treasurer and a staff user shows three different tab sets from the same build, on Android and on web. (Checked on web against the local stack; a run on an Android or iOS device or emulator is still to do.)
 
 ### M4. Wings, flats, members and opening balances
 

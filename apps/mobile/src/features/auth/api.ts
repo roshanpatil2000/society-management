@@ -110,3 +110,30 @@ export async function getPermissions(societyId: string): Promise<string[]> {
   fail(error);
   return data ?? [];
 }
+
+export async function signInWithGoogle(): Promise<'signed-in' | 'redirecting' | 'cancelled'> {
+  const [{ Platform }, AuthSession, WebBrowser, google] = await Promise.all([
+    import('react-native'),
+    import('expo-auth-session'),
+    import('expo-web-browser'),
+    import('./google'),
+  ]);
+  return google.signInWithGoogle({
+    platform: Platform.OS,
+    redirectUri: AuthSession.makeRedirectUri({ scheme: 'societyapp', path: 'auth-callback' }),
+    webOrigin: typeof window !== 'undefined' && window.location ? window.location.origin : '',
+    startOAuth: async ({ redirectTo, skipBrowserRedirect }) => {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo, skipBrowserRedirect },
+      });
+      if (error) throw error;
+      return { url: data.url ?? '' };
+    },
+    openAuthSession: (url, redirect) => WebBrowser.openAuthSessionAsync(url, redirect),
+    exchangeCode: async (code) => {
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (error) throw error;
+    },
+  });
+}
