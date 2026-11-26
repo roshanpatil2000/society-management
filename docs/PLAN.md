@@ -152,8 +152,8 @@ There is no public sign-up or application form. The super-admin creates every so
 **Invite delivery (members)**
 
 - Ordinary members, tenants and staff join only through `create_invite` by the committee. It stores the email, roles, flat and a random token, and refuses once the society's `invites_per_day` or `max_members` quota is reached.
-- Delivery: an invite email with the link `https://<app>/invite/<token>`, and/or a **Share invite** button that opens the phone's share sheet so the committee can forward the link on WhatsApp by hand, at no cost.
-- At login, any unexpired invite whose email matches the verified email (email OTP or Google) is offered to the user, with or without the link; the token only skips the lookup.
+- Delivery: an invite email with the society link `https://<app>/s/<code>`, and/or a **Share invite** button that opens the phone's share sheet so the committee can forward that link on WhatsApp by hand, at no cost.
+- At login, any unexpired invite whose email matches the verified email (email OTP or Google) is offered to the user. There is no separate per-invite link: the society link plus the email is enough, and nothing public is looked up by token.
 - Invites expire after 7 days. `resend_invite` issues a new token and expiry; `revoke_invite` cancels it. One pending invite per `(society_id, email)`.
 
 **Isolation tests (pgTAP, must pass in CI)**

@@ -6,7 +6,13 @@ import { useSessionStore } from '@/stores/session';
 
 import { signOut } from '../api';
 
-export function NotMemberScreen({ email }: { email: string }) {
+export function NotMemberScreen({
+  email,
+  hasOtherSocieties = false,
+}: {
+  email: string;
+  hasOtherSocieties?: boolean;
+}) {
   const { t } = useTranslation();
   const society = useSessionStore((s) => s.discovered);
   const forgetSociety = useSessionStore((s) => s.forgetSociety);
@@ -16,7 +22,12 @@ export function NotMemberScreen({ email }: { email: string }) {
     <Screen>
       <Text variant="headlineSmall">{t('membership.notMemberTitle', { society: name })}</Text>
       <Text variant="bodyMedium">{t('membership.notMemberBody', { society: name, email })}</Text>
-      <Button mode="contained" onPress={() => void signOut()}>
+      {hasOtherSocieties ? (
+        <Button mode="contained" onPress={forgetSociety}>
+          {t('membership.backToMine')}
+        </Button>
+      ) : null}
+      <Button mode={hasOtherSocieties ? 'text' : 'contained'} onPress={() => void signOut()}>
         {t('login.differentEmail')}
       </Button>
       <Button

@@ -43,6 +43,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      device: {
+        Row: {
+          created_at: string;
+          deleted_at: string | null;
+          expo_push_token: string;
+          id: string;
+          last_seen_at: string;
+          platform: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          deleted_at?: string | null;
+          expo_push_token: string;
+          id?: string;
+          last_seen_at?: string;
+          platform: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          deleted_at?: string | null;
+          expo_push_token?: string;
+          id?: string;
+          last_seen_at?: string;
+          platform?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'device_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       invite: {
         Row: {
           accepted_at: string | null;
@@ -757,6 +799,7 @@ export type Database = {
         Args: { p_society_id: string; p_status: string; p_trial_ends_at?: string };
         Returns: undefined;
       };
+      register_device: { Args: { p_platform: string; p_token: string }; Returns: undefined };
       request_setting_change: {
         Args: { p_key: string; p_society_id: string; p_value: Json };
         Returns: string;
@@ -770,6 +813,7 @@ export type Database = {
         }[];
       };
       revoke_invite: { Args: { p_invite_id: string }; Returns: undefined };
+      unregister_device: { Args: { p_token: string }; Returns: undefined };
       update_role: {
         Args: { p_name?: string; p_permissions?: string[]; p_role_id: string };
         Returns: undefined;

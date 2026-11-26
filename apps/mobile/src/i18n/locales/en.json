@@ -46,7 +46,8 @@
     "inviteBody": "Accept to join as {{roles}}.",
     "accept": "Accept invite",
     "pickerTitle": "Choose a society",
-    "joinAnother": "Join another society"
+    "joinAnother": "Join another society",
+    "backToMine": "Back to my societies"
   },
   "consent": {
     "title": "Your data",

@@ -162,6 +162,17 @@ describe('NotMemberScreen', () => {
   });
 });
 
+describe('NotMemberScreen for someone who belongs to another society', () => {
+  beforeEach(() => useSessionStore.getState().chooseSociety(greenPark));
+
+  it('goes back to their own societies without signing out', async () => {
+    await renderScreen(<NotMemberScreen email="ravi@example.com" hasOtherSocieties />);
+    await fireEvent.press(screen.getByText('Back to my societies'));
+    expect(useSessionStore.getState().discovered).toBeNull();
+    expect(mocked.signOut).not.toHaveBeenCalled();
+  });
+});
+
 describe('InviteScreen', () => {
   it('accepts the pending invite for the society', async () => {
     mocked.acceptInvite.mockResolvedValue('membership-id');
