@@ -87,6 +87,9 @@ export function DiscoverScreen() {
       <Button icon="qrcode-scan" onPress={() => router.push('/scan')}>
         {t('discovery.scan')}
       </Button>
+      <Button compact onPress={() => router.push('/login')}>
+        {t('discovery.adminSignIn')}
+      </Button>
     </Screen>
   );
 }

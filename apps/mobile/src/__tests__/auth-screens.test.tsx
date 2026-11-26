@@ -62,6 +62,14 @@ describe('DiscoverScreen', () => {
   });
 });
 
+describe('DiscoverScreen super-admin entry', () => {
+  it('lets the super-admin, who belongs to no society, go straight to sign-in', async () => {
+    await renderScreen(<DiscoverScreen />);
+    await fireEvent.press(screen.getByText('Super-admin sign in'));
+    expect(router.push).toHaveBeenCalledWith('/login');
+  });
+});
+
 describe('LoginScreen', () => {
   beforeEach(() => useSessionStore.getState().chooseSociety(greenPark));
 
@@ -195,6 +203,14 @@ describe('ConsentScreen', () => {
     expect(screen.getByText(/Green Park CHS uses Society App/)).toBeTruthy();
     await fireEvent.press(screen.getByText('I agree'));
     await waitFor(() => expect(mocked.acceptConsent).toHaveBeenCalledWith(1));
+  });
+
+  it('lets someone who does not agree sign out instead', async () => {
+    mocked.signOut.mockResolvedValue(undefined);
+    await renderScreen(<ConsentScreen societyName="Green Park CHS" />);
+    await fireEvent.press(screen.getByText('Sign out'));
+    await waitFor(() => expect(mocked.signOut).toHaveBeenCalled());
+    expect(mocked.acceptConsent).not.toHaveBeenCalled();
   });
 });
 

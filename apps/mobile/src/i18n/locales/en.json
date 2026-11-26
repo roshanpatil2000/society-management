@@ -20,7 +20,8 @@
     "confirmTitle": "Is this your society?",
     "confirm": "Yes, continue",
     "change": "No, enter another code",
-    "cameraDenied": "Allow camera access to scan the QR code, or type the code instead."
+    "cameraDenied": "Allow camera access to scan the QR code, or type the code instead.",
+    "adminSignIn": "Super-admin sign in"
   },
   "login": {
     "title": "Sign in to {{society}}",
@@ -108,7 +109,8 @@
     "reactivate": "Reactivate",
     "quotas": "Quotas",
     "qr": "Notice-board QR code",
-    "link": "Society link"
+    "link": "Society link",
+    "saveQuotas": "Save quotas"
   },
   "errors": {
     "generic": "Something went wrong. Try again.",

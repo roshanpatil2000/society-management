@@ -7,7 +7,7 @@ import { ErrorText } from '@/components/ErrorText';
 import { Screen } from '@/components/Screen';
 import { errorKey } from '@/lib/errors';
 
-import { acceptConsent } from '../api';
+import { acceptConsent, signOut } from '../api';
 import { CURRENT_CONSENT_VERSION } from '../gate';
 
 export function ConsentScreen({ societyName }: { societyName: string }) {
@@ -37,6 +37,7 @@ export function ConsentScreen({ societyName }: { societyName: string }) {
       <Button mode="contained" onPress={accept} loading={busy} disabled={busy}>
         {t('consent.accept')}
       </Button>
+      <Button onPress={() => void signOut()}>{t('profile.signOut')}</Button>
     </Screen>
   );
 }
