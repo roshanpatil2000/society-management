@@ -1,0 +1,10 @@
+node_modules
+pnpm-lock.yaml
+.expo
+dist
+coverage
+supabase/.temp
+supabase/.branches
+apps/mobile/android
+apps/mobile/ios
+*.md

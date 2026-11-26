@@ -1,0 +1,2 @@
+-- Demo data for local development, loaded by `supabase db reset`.
+-- M1 adds 2 demo societies and a user for each role.

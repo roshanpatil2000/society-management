@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    name: Lint, type-check, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  database:
+    name: Migrations and pgTAP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Only the database is needed for migrations and pgTAP.
+      - run: pnpm exec supabase start -x gotrue,realtime,storage-api,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+      - run: pnpm exec supabase db reset
+      - run: pnpm exec supabase test db
+
+  deploy-staging:
+    name: Deploy to staging
+    # Runs only on main, and only once the staging project is configured
+    # (repository variable STAGING_PROJECT_REF, see docs/SECRETS.md).
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.STAGING_PROJECT_REF != ''
+    needs: [app, database]
+    runs-on: ubuntu-latest
+    environment: staging
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.STAGING_DB_PASSWORD }}
+      SUPABASE_YES: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec supabase link --project-ref "${{ vars.STAGING_PROJECT_REF }}"
+      - run: pnpm exec supabase db push --remote --password "$SUPABASE_DB_PASSWORD"
+      - name: Deploy Edge Functions
+        run: |
+          if find supabase/functions -mindepth 2 -name index.ts | grep -q .; then
+            pnpm exec supabase functions deploy --use-api
+          else
+            echo "No Edge Functions yet."
+          fi
