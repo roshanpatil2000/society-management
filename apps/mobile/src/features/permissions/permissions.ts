@@ -56,3 +56,26 @@ export function visibleTabs(permissions: readonly string[]): TabDefinition[] {
     (tab) => tab.anyOf.length === 0 || tab.anyOf.some((key) => permissions.includes(key)),
   );
 }
+
+export const MORE_TAB: TabDefinition = {
+  name: 'more',
+  titleKey: 'tabs.more',
+  icon: 'menu',
+  anyOf: [],
+};
+
+/**
+ * Phones show at most `max` tabs. With more, Home stays first and Profile last,
+ * the first few module tabs stay on the bar, and the rest move under More.
+ */
+export function splitTabs(
+  tabs: readonly TabDefinition[],
+  max = 5,
+): { bar: TabDefinition[]; more: TabDefinition[] } {
+  if (tabs.length <= max) return { bar: [...tabs], more: [] };
+  const [home, ...rest] = tabs;
+  const profile = rest.pop();
+  if (!home || !profile) return { bar: [...tabs], more: [] };
+  const keep = Math.max(0, max - 3);
+  return { bar: [home, ...rest.slice(0, keep), MORE_TAB, profile], more: rest.slice(keep) };
+}

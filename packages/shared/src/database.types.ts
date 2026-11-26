@@ -332,6 +332,8 @@ export type Database = {
       profiles: {
         Row: {
           avatar_key: string | null;
+          consent_accepted_at: string | null;
+          consent_version: number | null;
           created_at: string;
           deleted_at: string | null;
           email: string | null;
@@ -345,6 +347,8 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           avatar_key?: string | null;
+          consent_accepted_at?: string | null;
+          consent_version?: number | null;
           created_at?: string;
           deleted_at?: string | null;
           email?: string | null;
@@ -357,6 +361,8 @@ export type Database = {
         };
         Update: {
           avatar_key?: string | null;
+          consent_accepted_at?: string | null;
+          consent_version?: number | null;
           created_at?: string;
           deleted_at?: string | null;
           email?: string | null;
@@ -660,6 +666,7 @@ export type Database = {
       };
     };
     Functions: {
+      accept_consent: { Args: { p_version: number }; Returns: undefined };
       accept_invite: { Args: { p_token: string }; Returns: string };
       admin_add_committee_begin: {
         Args: { p_actor: string; p_committee: Json; p_society_id: string };

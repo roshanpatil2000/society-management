@@ -63,7 +63,8 @@
     "expenses": "Expenses",
     "accounts": "Accounts",
     "society": "Society",
-    "profile": "Profile"
+    "profile": "Profile",
+    "more": "More"
   },
   "home": {
     "greeting": "Hello, {{name}}",

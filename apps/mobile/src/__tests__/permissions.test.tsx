@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react-native';
 import { Text } from 'react-native';
 
 import { Can } from '@/features/permissions/Can';
-import { can, visibleTabs } from '@/features/permissions/permissions';
+import { can, splitTabs, visibleTabs } from '@/features/permissions/permissions';
 import { useSessionStore } from '@/stores/session';
 import { ROLE_PRESETS, type PermissionKey } from '@society/shared';
 
@@ -59,6 +59,32 @@ describe('visibleTabs', () => {
 
   it('always keeps Home and Profile, even with no permissions', () => {
     expect(visibleTabs([]).map((t) => t.name)).toEqual(['index', 'profile']);
+  });
+});
+
+describe('splitTabs', () => {
+  it('keeps every tab on the bar when there are five or fewer', () => {
+    const { bar, more } = splitTabs(visibleTabs(presetKeys('Member')));
+    expect(bar.map((t) => t.name)).toEqual([
+      'index',
+      'bills',
+      'complaints',
+      'transparency',
+      'profile',
+    ]);
+    expect(more).toEqual([]);
+  });
+
+  it('puts the overflow under More, keeping Home first and Profile last', () => {
+    const { bar, more } = splitTabs(visibleTabs(presetKeys('Chairman')));
+    expect(bar.map((t) => t.name)).toEqual(['index', 'bills', 'complaints', 'more', 'profile']);
+    expect(more.map((t) => t.name)).toEqual([
+      'transparency',
+      'billing',
+      'expenses',
+      'accounts',
+      'society',
+    ]);
   });
 });
 

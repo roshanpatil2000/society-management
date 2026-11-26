@@ -17,6 +17,7 @@ export type LanguageCode = (typeof LANGUAGES)[number]['code'];
 const supported = LANGUAGES.map((l) => l.code) as string[];
 const deviceLanguage = getLocales()[0]?.languageCode ?? 'en';
 
+// eslint-disable-next-line import/no-named-as-default-member -- i18next's documented setup
 void i18n.use(initReactI18next).init({
   resources: { en: { translation: en }, mr: { translation: mr }, hi: { translation: hi } },
   lng: supported.includes(deviceLanguage) ? deviceLanguage : 'en',

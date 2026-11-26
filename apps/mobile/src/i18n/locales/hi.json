@@ -63,7 +63,8 @@
     "expenses": "खर्च",
     "accounts": "हिसाब",
     "society": "सोसाइटी",
-    "profile": "प्रोफ़ाइल"
+    "profile": "प्रोफ़ाइल",
+    "more": "और"
   },
   "home": {
     "greeting": "नमस्ते, {{name}}",
