@@ -106,9 +106,8 @@ const deps: OnboardDeps = {
     );
   },
   sendEmail: createEmailSender(),
-  async societyName(societyId) {
-    const row = check(await admin.from('society').select('name').eq('id', societyId).single());
-    return row.name;
+  async society(societyId) {
+    return check(await admin.from('society').select('name, slug').eq('id', societyId).single());
   },
   appUrl: optionalEnv('APP_URL') ?? 'http://localhost:8081',
 };

@@ -68,17 +68,17 @@ reset role;
 set local role service_role;
 
 select throws_ok(
-  format('select public.admin_onboard_begin(%L, %L, %L)', current_setting('t.chair'), '{"name":"Rogue CHS"}',
+  format('select public.admin_onboard_begin(%L, %L, %L)', current_setting('t.chair'), '{"name":"Rogue CHS","slug":"rogue"}',
          '[{"email":"x@society.test","full_name":"X","roles":["Chairman"]}]'),
   '42501', null, 'onboarding refuses an actor who is not a platform admin');
 select throws_like(
-  format('select public.admin_onboard_begin(%L, %L, %L)', current_setting('t.admin'), '{"name":"Bad Roles CHS"}',
+  format('select public.admin_onboard_begin(%L, %L, %L)', current_setting('t.admin'), '{"name":"Bad Roles CHS","slug":"bad-roles"}',
          '[{"email":"x@society.test","full_name":"X","roles":["Emperor"]}]'),
   'invalid_committee: unknown role%', 'onboarding refuses an unknown role name');
 
 select set_config('t.begin', public.admin_onboard_begin(
   current_setting('t.admin')::uuid,
-  '{"name": "Lake View CHS", "registration_no": "PUN/HSG/9009", "quotas": {"max_flats": 120}}',
+  '{"name": "Lake View CHS", "slug": "lake-view", "registration_no": "PUN/HSG/9009", "quotas": {"max_flats": 120}}',
   '[{"email": "chair.l@society.test", "full_name": "Lata", "roles": ["Chairman"]}]')::text, true);
 select set_config('t.l', current_setting('t.begin')::jsonb ->> 'society_id', true);
 
@@ -88,7 +88,7 @@ select is((select (quotas ->> 'max_flats')::int from public.society where id = c
   'quota overrides from the request are applied');
 select throws_like(
   format('select public.admin_onboard_begin(%L, %L, %L)', current_setting('t.admin'),
-         '{"name": "Copy CHS", "registration_no": "PUN/HSG/9009"}',
+         '{"name": "Copy CHS", "slug": "copy-chs", "registration_no": "PUN/HSG/9009"}',
          '[{"email":"copy@society.test","full_name":"C","roles":["Chairman"]}]'),
   'duplicate_registration%', 'a duplicate registration number is refused');
 
@@ -115,7 +115,7 @@ select is((select s.status || ':' || p.full_name || ':' || r.name
 
 -- Abort closes a society that never finished onboarding.
 select set_config('t.begin2', public.admin_onboard_begin(
-  current_setting('t.admin')::uuid, '{"name": "Half Done CHS"}',
+  current_setting('t.admin')::uuid, '{"name": "Half Done CHS", "slug": "half-done"}',
   '[{"email": "half@society.test", "full_name": "H", "roles": ["Chairman"]}]')::text, true);
 select public.admin_onboard_abort(current_setting('t.admin')::uuid,
   (current_setting('t.begin2')::jsonb ->> 'society_id')::uuid,

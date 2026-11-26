@@ -8,6 +8,7 @@
 --   member.a@society.test    Member            tenant.a@society.test     Tenant
 --   staff.a@society.test     Staff             auditor.a@society.test    Auditor
 -- Blue Ridge CHS: chair.b@society.test (Chairman), member.b@society.test (Member)
+-- Society codes (tenant discovery): greenpark, blueridge.
 -- Pending invite: invitee.a@society.test (Member, Green Park CHS), so its first login creates the account.
 
 insert into private.platform_admin_email (email) values ('admin@society.test');
@@ -51,8 +52,8 @@ begin
 
   perform set_config('app.actor', 'seed', true);
 
-  society_a := private.create_society_impl('{"name": "Green Park CHS", "registration_no": "MUM/W-K/HSG/TC/1001", "address": "Andheri West, Mumbai"}');
-  society_b := private.create_society_impl('{"name": "Blue Ridge CHS", "registration_no": "PUN/HSG/2002", "address": "Hinjewadi, Pune"}');
+  society_a := private.create_society_impl('{"name": "Green Park CHS", "slug": "greenpark", "registration_no": "MUM/W-K/HSG/TC/1001", "address": "Andheri West, Mumbai"}');
+  society_b := private.create_society_impl('{"name": "Blue Ridge CHS", "slug": "blueridge", "registration_no": "PUN/HSG/2002", "address": "Hinjewadi, Pune"}');
   update public.society set status = 'active' where id in (society_a, society_b);
 
   for i in 1 .. array_length(people, 1) loop

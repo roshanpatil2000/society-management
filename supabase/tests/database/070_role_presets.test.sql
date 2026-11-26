@@ -31,7 +31,7 @@ select ok(not exists (select 1 from public.role_preset, unnest(permissions) k wh
   'no preset carries a platform permission');
 
 -- A brand-new society gets all eight, as system roles, with the preset permissions.
-select set_config('t.new', private.create_society_impl('{"name": "Preset Test CHS"}')::text, true);
+select set_config('t.new', private.create_society_impl('{"name": "Preset Test CHS", "slug": "preset-test"}')::text, true);
 select is(
   (select array_agg(r.name order by p.sort_order)
      from public.role r join public.role_preset p on p.name = r.name

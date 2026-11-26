@@ -111,6 +111,16 @@ RLS only checks a row's own `society_id`, so these rules close the gaps it leave
 - One society → open it; more than one → society picker. The app stores the chosen `society_id` and adds `.eq('society_id', activeSocietyId)` to queries. RLS still blocks other societies even if the filter is missing.
 - Switching society calls `get_my_permissions(society_id)` and rebuilds the navigation.
 
+**Tenant discovery (society code before login)**
+
+Like HRMS apps such as Darwinbox, the app asks which society you belong to before it shows a login screen. One Supabase project serves every society (pool model), so discovery only picks the society and its branding; it grants nothing, and RLS still decides every read and write after login.
+
+- Every society has a public **society code** (`society.slug`): 3 to 30 lower-case letters, digits and single hyphens, unique, not a reserved word (`www`, `app`, `api`, `admin`, `s`, `login`, `auth`, `help`, `support`, `staging`, `static`). The super-admin sets it at onboarding; only `platform_set_society_slug` changes it, because it is printed on QR codes. Rules live in `packages/shared/src/society-code.ts` and `private.is_valid_society_slug`.
+- `discover_society(p_code)` is the one function anon may call. It accepts a typed code (`GreenPark`), a web link (`https://<app>/s/greenpark`), a deep link (`societyapp://s/greenpark`) or a subdomain (`greenpark.<domain>`), and returns only `society_id`, `slug`, `name`, `city`, `logo_url` and `login_methods`. Unknown, suspended, expired, closed and deleted societies all return nothing, so a lookup reveals nothing beyond what a notice board shows.
+- Discovery is by code, never by email, so nobody can find out whether an email belongs to a society.
+- In the app: enter or scan the code, confirm "Green Park CHS, Andheri West", then a login screen branded for that society with only its `login_methods`. After login, open that society if `my_memberships` has it; otherwise offer a pending invite for it; otherwise say "This email isn't a member of Green Park CHS". People in several societies still switch with the picker; "Join another society" runs discovery again.
+- Links and QR codes (`https://<app>/s/<code>`, `societyapp://s/<code>`) open the app on that society's login screen. Welcome emails carry the link and the code.
+
 **Login: email OTP + Google (SMS optional, off by default)**
 
 - A person's identity is their email in `auth.users`. They log in with a 6-digit **email OTP** (`signInWithOtp({ email, options: { shouldCreateUser: false } })`) or **Sign in with Google**. A Google account with the same verified email is linked automatically to the existing user, so anyone created by email can later just tap Google.
@@ -244,7 +254,7 @@ The Phase 1 schema has about 35 tables in the `public` schema, all with RLS enab
 | --- | --- |
 | `auth.users` | Managed by Supabase Auth (email, Google identity, sessions, OTP) |
 | `profiles` | id (= auth.users.id), full_name, email (required, mirrors auth), phone (optional contact), whatsapp_opt_in, whatsapp_opt_in_at, avatar_key |
-| `society` | id, name, registration_no, address, gstin, status (onboarding, trial, active, suspended, closed), plan, trial_ends_at, quotas (jsonb: max_flats, max_members, emails_per_month, whatsapp_per_month, sms_per_month (default 0 = SMS off), storage_mb, invites_per_day; set only by `platform.*` RPCs), financial_year_start_month, timezone, locked_until (date; no financial writes on or before it), settings (jsonb: interest rate, grace days, approval_limit, gst_enabled, billing cycle, upi_id, payee_name, razorpay_enabled, rounding) |
+| `society` | id, name, slug (public society code for tenant discovery), logo_path, login_methods (email_otp, google), registration_no, address, gstin, status (onboarding, trial, active, suspended, closed), plan, trial_ends_at, quotas (jsonb: max_flats, max_members, emails_per_month, whatsapp_per_month, sms_per_month (default 0 = SMS off), storage_mb, invites_per_day; set only by `platform.*` RPCs), financial_year_start_month, timezone, locked_until (date; no financial writes on or before it), settings (jsonb: interest rate, grace days, approval_limit, gst_enabled, billing cycle, upi_id, payee_name, razorpay_enabled, rounding) |
 | `setting_change` | society_id, key, old_value, new_value, requested_by, approved_by, status (pending, approved, rejected) — for sensitive settings, which change only through it |
 | `platform_admin` | user_id |
 | `permission` | key, module, description (seeded from `packages/shared`) |
@@ -553,10 +563,16 @@ Build one milestone at a time, in this order, and don't start the next until its
 - `role_preset` table seeded from `packages/shared`; a database sync test (`pnpm --filter @society/shared test:db`, run in CI) checks the `permission` and `role_preset` tables match the shared code.
 - **Done when:** pgTAP tests prove each default role can read and write only what its permissions allow; a user can't grant a key they lack, either by RPC or by direct table write; changing the UPI ID needs a second user.
 
+### M2.1. Tenant discovery
+
+- `society.slug`, `logo_path`, `login_methods`; slugs backfilled for existing societies; `create_society_impl` requires a slug; `discover_society` (anon) and `platform_set_society_slug`; `packages/shared/src/society-code.ts`; onboarding schema and `admin-onboard-society` take the code, and welcome emails carry the society link.
+- **Done when:** anyone can look up an active society by code, link or subdomain and gets only public details; hidden societies return nothing; anon can still read no table; slug rules, uniqueness and super-admin-only changes are enforced.
+
 ### M3. App shell
 
 - Expo Router with `(auth)` and `(app)` groups; email OTP and Google login screens with a clear "not registered, ask your committee" message and Turnstile on the code screen; pending invites offered after login (`my_pending_invites`, `accept_invite`); consent notice; society picker; session in secure storage (native) / web storage (web).
-- Admin section of the web build, shown only to platform admins: onboard a society with its committee (calls `admin-onboard-society`), list societies, change status and quotas.
+- Tenant discovery screens: "Enter your society code" (type, scan QR, or open a `/s/<code>` link) calling `discover_society`; the chosen society is remembered; a login screen branded for it with only its `login_methods`; the "not a member of this society" message with "Use a different email" and "Change society"; universal and deep links (`https://<app>/s/<code>`, `societyapp://s/<code>`).
+- Admin section of the web build, shown only to platform admins: onboard a society with its committee and society code (calls `admin-onboard-society`; suggests a code from the name with `suggestSocietySlug`), list societies, change status, quotas and code, and print the society's QR code for the notice board.
 - Permission-driven tab bar, `usePermission` and `<Can>`; Home and Profile; society switching; i18n set up with English, plus Marathi and Hindi string files.
 - `device` table and push-token registration.
 - **Done when:** logging in as a member, a treasurer and a staff user shows three different tab sets from the same build, on Android and on web.
@@ -604,6 +620,7 @@ Build one milestone at a time, in this order, and don't start the next until its
 - App E2E tests with Maestro for the main flows (login, pay and verify, raise complaint, approve expense).
 - Load check: 1,000 flats × 12 billing runs × payments; billing run, `flat_ledger` and reports stay under 2 seconds.
 - Backup-restore drill into a scratch project; WhatsApp templates approved; SMTP domain set up with SPF, DKIM and DMARC; super-admin view of each society's usage against quotas; privacy policy and account-deletion flow live; store listings.
+- Optional: per-society subdomains for the web build (`<code>.<domain>`, wildcard DNS and TLS); `discover_society` already accepts that form.
 - Pilot in one society, with its opening balances imported.
 
 ## Open decisions
@@ -618,6 +635,7 @@ Decide these before the milestone named; until then the default holds.
 | Members with no email address | Committee helps them create a Gmail, or adds a family member's email as joint occupant; no phone/password login | M4 |
 | Default quotas per plan (flats, members, emails, WhatsApp, storage, invites per day) | Pilot plan: 300 flats, 1,000 members, 5,000 emails and 500 WhatsApp per month, 2 GB, 100 invites per day | M1 |
 | How societies pay the platform | Invoiced outside the app; super-admin sets status | M10 |
+| Tie first sign-up to the discovered society (the app passes `society_slug` in sign-up metadata and the Before User Created hook checks the invite is for that society) | Not needed for security; invites and RLS already decide membership | M3 |
 | Whether to switch on SMS (notifications and/or phone OTP login) | Off; build the Optional SMS design only if pilot feedback needs it | After pilot |
 | Languages at pilot: Marathi and Hindi translations complete, or English only | English complete, others as string files | M10 |
 | Interest cap and whether a society may charge compound interest | 21% p.a. simple, no compounding | M5 |

@@ -1,6 +1,8 @@
-// Request schema for the admin-onboard-society Edge Function. Self-contained (imports
-// only zod) so the Deno function can import this file directly.
+// Request schema for the admin-onboard-society Edge Function. Imports only zod and
+// the self-contained society-code module, so the Deno function can import it directly.
 import { z } from 'zod';
+
+import { isValidSocietySlug, normalizeSocietyCode } from '../society-code.ts';
 
 const email = z
   .string()
@@ -37,8 +39,17 @@ export const quotasSchema = z
   .partial()
   .strict();
 
+const societySlug = z
+  .string()
+  .transform((v) => normalizeSocietyCode(v) ?? v.trim().toLowerCase())
+  .refine(isValidSocietySlug, {
+    message:
+      'Society code must be 3 to 30 letters, digits or single hyphens, and not a reserved word',
+  });
+
 export const societyDetailsSchema = z.object({
   name: z.string().trim().min(2, 'Society name is required').max(200),
+  slug: societySlug,
   registration_no: optionalText(80),
   address: optionalText(500),
   gstin: z

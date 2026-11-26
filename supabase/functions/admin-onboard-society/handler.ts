@@ -13,6 +13,7 @@ import {
   onboardSocietyRequestSchema,
   type OnboardSocietyRequest,
 } from '../../../packages/shared/src/schemas/onboarding.ts';
+import { societyLink } from '../../../packages/shared/src/society-code.ts';
 import { errorResponse, json } from '../_shared/http.ts';
 import { escapeHtml, type EmailMessage } from '../_shared/email.ts';
 
@@ -45,27 +46,30 @@ export interface OnboardDeps {
   ): Promise<void>;
   abort(actor: string, societyId: string, inviteIds: string[]): Promise<void>;
   sendEmail(message: EmailMessage): Promise<void>;
-  societyName(societyId: string): Promise<string>;
+  society(societyId: string): Promise<{ name: string; slug: string }>;
   appUrl: string;
 }
 
 export function welcomeEmail(
   to: string,
   fullName: string | null,
-  societyName: string,
+  society: { name: string; slug: string },
   appUrl: string,
 ): EmailMessage {
   const name = fullName ?? 'there';
+  const link = societyLink(society.slug, appUrl);
   return {
     to,
-    subject: `${societyName} is set up on Society App`,
+    subject: `${society.name} is set up on Society App`,
     text:
-      `Hello ${name},\n\n${societyName} is now set up on Society App and you are on its committee.\n` +
-      `Sign in at ${appUrl} with this email address (${to}), using the code we email you or Sign in with Google.\n`,
+      `Hello ${name},\n\n${society.name} is now set up on Society App and you are on its committee.\n` +
+      `Open ${link} (or enter society code ${society.slug} in the app) and sign in with this email ` +
+      `address (${to}), using the code we email you or Sign in with Google.\n`,
     html:
       `<p>Hello ${escapeHtml(name)},</p>` +
-      `<p><strong>${escapeHtml(societyName)}</strong> is now set up on Society App and you are on its committee.</p>` +
-      `<p>Sign in at <a href="${escapeHtml(appUrl)}">${escapeHtml(appUrl)}</a> with this email address ` +
+      `<p><strong>${escapeHtml(society.name)}</strong> is now set up on Society App and you are on its committee.</p>` +
+      `<p>Open <a href="${escapeHtml(link)}">${escapeHtml(link)}</a> (or enter society code ` +
+      `<strong>${escapeHtml(society.slug)}</strong> in the app) and sign in with this email address ` +
       `(${escapeHtml(to)}), using the code we email you or Sign in with Google.</p>`,
   };
 }
@@ -165,11 +169,13 @@ export async function handleOnboard(
   }
 
   // Step 5: welcome emails. Failures are reported, not rolled back.
-  const societyName = await deps.societyName(begun.society_id).catch(() => 'Your society');
+  const society = await deps
+    .society(begun.society_id)
+    .catch(() => ({ name: 'Your society', slug: '' }));
   const emailFailures: { email: string; error: string }[] = [];
   for (const invite of begun.invites) {
     try {
-      await deps.sendEmail(welcomeEmail(invite.email, invite.full_name, societyName, deps.appUrl));
+      await deps.sendEmail(welcomeEmail(invite.email, invite.full_name, society, deps.appUrl));
     } catch (err) {
       emailFailures.push({ email: invite.email, error: messageOf(err) });
     }

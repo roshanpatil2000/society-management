@@ -523,11 +523,14 @@ export type Database = {
           gstin: string | null;
           id: string;
           locked_until: string | null;
+          login_methods: string[];
+          logo_path: string | null;
           name: string;
           plan: string;
           quotas: NonNullable<Json>;
           registration_no: string | null;
           settings: NonNullable<Json>;
+          slug: string;
           status: string;
           timezone: string;
           trial_ends_at: string | null;
@@ -543,11 +546,14 @@ export type Database = {
           gstin?: string | null;
           id?: string;
           locked_until?: string | null;
+          login_methods?: string[];
+          logo_path?: string | null;
           name: string;
           plan?: string;
           quotas?: NonNullable<Json>;
           registration_no?: string | null;
           settings?: NonNullable<Json>;
+          slug: string;
           status?: string;
           timezone?: string;
           trial_ends_at?: string | null;
@@ -562,11 +568,14 @@ export type Database = {
           gstin?: string | null;
           id?: string;
           locked_until?: string | null;
+          login_methods?: string[];
+          logo_path?: string | null;
           name?: string;
           plan?: string;
           quotas?: NonNullable<Json>;
           registration_no?: string | null;
           settings?: NonNullable<Json>;
+          slug?: string;
           status?: string;
           timezone?: string;
           trial_ends_at?: string | null;
@@ -704,6 +713,17 @@ export type Database = {
         Args: { p_name: string; p_permissions: string[]; p_society_id: string };
         Returns: string;
       };
+      discover_society: {
+        Args: { p_code: string };
+        Returns: {
+          city: string;
+          login_methods: string[];
+          logo_url: string;
+          name: string;
+          slug: string;
+          society_id: string;
+        }[];
+      };
       email_hook_check: { Args: { p_action: string; p_email: string }; Returns: Json };
       get_my_permissions: { Args: { p_society_id: string }; Returns: string[] };
       my_pending_invites: {
@@ -721,6 +741,10 @@ export type Database = {
       platform_set_quotas: {
         Args: { p_plan?: string; p_quotas?: Json; p_society_id: string };
         Returns: Json;
+      };
+      platform_set_society_slug: {
+        Args: { p_slug: string; p_society_id: string };
+        Returns: string;
       };
       platform_set_society_status: {
         Args: { p_society_id: string; p_status: string; p_trial_ends_at?: string };

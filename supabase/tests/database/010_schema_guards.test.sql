@@ -73,8 +73,8 @@ select is(
      from pg_proc p join pg_namespace n on n.oid = p.pronamespace
     where n.nspname = 'public' and p.prokind = 'f'
       and has_function_privilege('anon', p.oid, 'execute')),
-  '',
-  'anon can execute no function in public'
+  'discover_society',
+  'anon can execute only discover_society in public (tenant discovery before login)'
 );
 
 select * from finish();

@@ -4,7 +4,7 @@ import { onboardSocietyRequestSchema } from '../schemas/onboarding';
 
 const valid = {
   action: 'onboard',
-  society: { name: 'Green Park CHS', registration_no: 'MUM/1001' },
+  society: { name: 'Green Park CHS', slug: 'GreenPark', registration_no: 'MUM/1001' },
   committee: [{ email: ' Chair@Example.com ', full_name: 'Asha', roles: ['Chairman'] }],
 };
 
@@ -15,6 +15,16 @@ describe('onboardSocietyRequestSchema', () => {
     if (parsed.action !== 'onboard') throw new Error('unreachable');
     expect(parsed.committee[0]?.email).toBe('chair@example.com');
     expect(parsed.status).toBe('trial');
+  });
+
+  it('requires a valid society code and normalises it', () => {
+    const parsed = onboardSocietyRequestSchema.parse(valid);
+    if (parsed.action !== 'onboard') throw new Error('unreachable');
+    expect(parsed.society.slug).toBe('greenpark');
+    const noSlug = { ...valid, society: { name: 'Green Park CHS' } };
+    expect(onboardSocietyRequestSchema.safeParse(noSlug).success).toBe(false);
+    const reserved = { ...valid, society: { ...valid.society, slug: 'admin' } };
+    expect(onboardSocietyRequestSchema.safeParse(reserved).success).toBe(false);
   });
 
   it('rejects duplicate committee emails', () => {

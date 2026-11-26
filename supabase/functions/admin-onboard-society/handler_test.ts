@@ -6,7 +6,7 @@ import { handleOnboard, type OnboardDeps } from './handler.ts';
 const ADMIN = 'admin-user-id';
 const body = {
   action: 'onboard',
-  society: { name: 'Green Park CHS' },
+  society: { name: 'Green Park CHS', slug: 'GreenPark' },
   committee: [
     { email: 'chair@example.com', full_name: 'Asha', roles: ['Chairman'] },
     { email: 'existing@example.com', full_name: 'Ravi', roles: ['Member'] },
@@ -73,7 +73,7 @@ function fakeDeps(overrides: Partial<OnboardDeps> = {}): Recorder {
       rec.sent.push(m);
       return Promise.resolve();
     },
-    societyName: () => Promise.resolve('Green Park CHS'),
+    society: () => Promise.resolve({ name: 'Green Park CHS', slug: 'greenpark' }),
     appUrl: 'http://localhost:8081',
     ...overrides,
   };
@@ -100,6 +100,30 @@ Deno.test('rejects an invalid body with 400 before touching the database', async
   assertEquals(rec.finished.length, 0);
 });
 
+Deno.test('passes the normalised society code to the database', async () => {
+  let society: unknown;
+  const rec = fakeDeps({
+    beginOnboard: (_actor, s) => {
+      society = s;
+      return Promise.resolve({ society_id: 'soc-1', invites: [] });
+    },
+  });
+  const res = await handleOnboard(request(body), rec.deps, 'admin-token');
+  assertEquals(res.status, 200);
+  assertEquals((society as { slug: string }).slug, 'greenpark');
+});
+
+Deno.test('refuses a society without a code', async () => {
+  const rec = fakeDeps();
+  const res = await handleOnboard(
+    request({ ...body, society: { name: 'No Code CHS' } }),
+    rec.deps,
+    'admin-token',
+  );
+  assertEquals(res.status, 400);
+  assertEquals(rec.finished.length, 0);
+});
+
 Deno.test(
   'creates only missing accounts, finishes with trial and sends welcome emails',
   async () => {
@@ -121,6 +145,13 @@ Deno.test(
     );
   },
 );
+
+Deno.test('welcome emails link straight to the society login', async () => {
+  const rec = fakeDeps();
+  await handleOnboard(request(body), rec.deps, 'admin-token');
+  assertEquals(rec.sent[0]?.text.includes('http://localhost:8081/s/greenpark'), true);
+  assertEquals(rec.sent[0]?.text.includes('society code greenpark'), true);
+});
 
 Deno.test('rolls back created users and aborts when finishing fails', async () => {
   const rec = fakeDeps({ finish: () => Promise.reject(new Error('invite_not_pending')) });
