@@ -474,8 +474,8 @@
   // signed webhook, not a user JWT; the function verifies the signature itself.
   "functions": {
     "send-email-hook": {
-      "verify_jwt": false
-    }
+      "verify_jwt": false,
+    },
   },
 
   "edge_runtime": {
