@@ -24,9 +24,11 @@ select set_config('t.member_role', (select id::text from public.role
 select set_config('t.chair_role', (select id::text from public.role
   where society_id = current_setting('t.a')::uuid and name = 'Chairman'), true);
 
--- An "Inviter" role that can invite but holds nothing else, given to a fresh user.
+-- An "Inviter" role: can invite, and holds the Member preset's keys but not the
+-- Chairman's, given to a fresh user.
 insert into public.role (society_id, name, permissions)
-values (current_setting('t.a')::uuid, 'Inviter', array['members.invite', 'society.view']);
+select current_setting('t.a')::uuid, 'Inviter', array['members.invite'] || p.permissions
+from public.role_preset p where p.name = 'Member';
 select pg_temp.new_user('inviter.a@society.test');
 insert into public.membership (society_id, user_id)
 select current_setting('t.a')::uuid, id from auth.users where email = 'inviter.a@society.test';

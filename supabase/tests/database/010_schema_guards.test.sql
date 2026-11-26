@@ -51,7 +51,7 @@ select is(
   (select coalesce(string_agg(t.table_name, ', ' order by t.table_name), '')
      from information_schema.tables t
     where t.table_schema = 'public' and t.table_type = 'BASE TABLE'
-      and t.table_name not in ('audit_log', 'job_run', 'permission', 'platform_admin', 'platform_config')
+      and t.table_name not in ('audit_log', 'job_run', 'permission', 'role_preset', 'platform_admin', 'platform_config')
       and not exists (select 1 from information_schema.columns c
                       where c.table_schema = 'public' and c.table_name = t.table_name
                         and c.column_name = 'deleted_at')),

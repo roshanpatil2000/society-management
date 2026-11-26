@@ -414,6 +414,105 @@ export type Database = {
           },
         ];
       };
+      role_preset: {
+        Row: {
+          description: string;
+          name: string;
+          permissions: string[];
+          sort_order: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          description: string;
+          name: string;
+          permissions: string[];
+          sort_order: number;
+          updated_at?: string;
+        };
+        Update: {
+          description?: string;
+          name?: string;
+          permissions?: string[];
+          sort_order?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      setting_change: {
+        Row: {
+          approved_by: string | null;
+          created_at: string;
+          created_by: string | null;
+          decided_at: string | null;
+          decision_comment: string | null;
+          deleted_at: string | null;
+          id: string;
+          key: string;
+          new_value: NonNullable<Json>;
+          old_value: Json | null;
+          requested_by: string;
+          society_id: string;
+          status: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          approved_by?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          decided_at?: string | null;
+          decision_comment?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          key: string;
+          new_value: NonNullable<Json>;
+          old_value?: Json | null;
+          requested_by: string;
+          society_id: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          approved_by?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          decided_at?: string | null;
+          decision_comment?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          key?: string;
+          new_value?: NonNullable<Json>;
+          old_value?: Json | null;
+          requested_by?: string;
+          society_id?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'setting_change_approved_by_fkey';
+            columns: ['approved_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'setting_change_requested_by_fkey';
+            columns: ['requested_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'setting_change_society_id_fkey';
+            columns: ['society_id'];
+            isOneToOne: false;
+            referencedRelation: 'society';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       society: {
         Row: {
           address: string | null;
@@ -582,6 +681,11 @@ export type Database = {
         };
         Returns: Json;
       };
+      approve_setting_change: {
+        Args: { p_change_id: string; p_comment?: string; p_decision: string };
+        Returns: undefined;
+      };
+      assign_roles: { Args: { p_membership_id: string; p_role_ids: string[] }; Returns: undefined };
       create_invite: {
         Args: {
           p_email: string;
@@ -595,6 +699,10 @@ export type Database = {
           invite_id: string;
           token: string;
         }[];
+      };
+      create_role: {
+        Args: { p_name: string; p_permissions: string[]; p_society_id: string };
+        Returns: string;
       };
       email_hook_check: { Args: { p_action: string; p_email: string }; Returns: Json };
       get_my_permissions: { Args: { p_society_id: string }; Returns: string[] };
@@ -618,6 +726,10 @@ export type Database = {
         Args: { p_society_id: string; p_status: string; p_trial_ends_at?: string };
         Returns: undefined;
       };
+      request_setting_change: {
+        Args: { p_key: string; p_society_id: string; p_value: Json };
+        Returns: string;
+      };
       resend_invite: {
         Args: { p_invite_id: string };
         Returns: {
@@ -627,6 +739,11 @@ export type Database = {
         }[];
       };
       revoke_invite: { Args: { p_invite_id: string }; Returns: undefined };
+      update_role: {
+        Args: { p_name?: string; p_permissions?: string[]; p_role_id: string };
+        Returns: undefined;
+      };
+      update_society_settings: { Args: { p_settings: Json; p_society_id: string }; Returns: Json };
     };
     Enums: {
       [_ in never]: never;

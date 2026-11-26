@@ -206,9 +206,11 @@ RLS policies and RPC functions check permissions, never role names: roles are ju
 | Member (owner) | `bills.view.own`, `payments.make.own`, `members.view.own`, `complaints.create`, `complaints.view.own`, `dashboard.view`, `expenses.view`, `notices.view` |
 | Tenant | `complaints.create`, `complaints.view.own`, `dashboard.view`, `notices.view`, `bills.view.own`, `payments.make.own`; the bill keys only reach flats where the owner set `can_view_bills` (enforced by `my_billable_flat_ids`) |
 | Staff | `complaints.view.assigned`, `complaints.update_status`, `notices.view` |
+| Auditor | All `.view` keys, `reports.view`, `audit_log.view`; no write keys |
 
 The Chairman preset also holds `complaints.escalation.l2`. Because maker-checker applies by user, not role, a Chairman or Treasurer who generates a billing run still needs someone else to approve it.
-| Auditor | All `.view` keys, `reports.view`, `audit_log.view`; no write keys |
+
+"View everything" (Committee member, Auditor) means every society-wide view key: `society.view`, `flats.view.all`, `members.view.all`, `bills.view.all`, `payments.view.all`, `expenses.view`, `accounts.view`, `reports.view`, `dashboard.view`, `notices.view`, `complaints.view.all`, `audit_log.view` (not the `.own` or `.assigned` keys). The Treasurer also gets `society.view` and `notices.view`. The exact lists live in `packages/shared/src/role-presets.ts`; the `role_preset` table holds the same, and a database sync test fails if they differ.
 
 ## One app, role-based navigation
 
@@ -547,7 +549,8 @@ Build one milestone at a time, in this order, and don't start the next until its
 
 - Permission keys and role presets in `packages/shared`; migration seeds the `permission` table; `create_society` creates default roles.
 - `get_my_permissions`, `create_role`, `update_role`, `assign_roles` (refuse permissions the caller lacks, unknown keys, and removing the last `roles.manage` holder); no direct write policy on `role`.
-- `setting_change` with `request_setting_change` / `approve_setting_change` for sensitive settings.
+- `setting_change` with `request_setting_change` / `approve_setting_change` for sensitive settings: `upi_id`, `payee_name`, `approval_limit` (paise), `interest_rate` (% a year, 0 to 21), `grace_days` (0 to 90), `gst_enabled`, `razorpay_enabled`, `rounding`. The approver needs `society.update_sensitive` and can never be the requester. `update_society_settings` changes non-sensitive settings (`billing_cycle`) directly with `society.update`.
+- `role_preset` table seeded from `packages/shared`; a database sync test (`pnpm --filter @society/shared test:db`, run in CI) checks the `permission` and `role_preset` tables match the shared code.
 - **Done when:** pgTAP tests prove each default role can read and write only what its permissions allow; a user can't grant a key they lack, either by RPC or by direct table write; changing the UPI ID needs a second user.
 
 ### M3. App shell

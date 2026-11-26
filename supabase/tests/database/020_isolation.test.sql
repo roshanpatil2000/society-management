@@ -74,8 +74,9 @@ select is((select count(*)::int from public.membership), 1, 'member A sees only 
 select is((select count(*)::int from public.profiles), 1, 'member A sees only their own profile');
 select is((select count(*)::int from public.invite), 0, 'member A (no members.invite) sees no invites');
 select is((select count(*)::int from public.audit_log), 0, 'member A (no audit_log.view) sees no audit rows');
-select is(public.get_my_permissions(current_setting('app.society_a')::uuid), array['society.view'],
-  'member A has only society.view in Society A');
+select is(public.get_my_permissions(current_setting('app.society_a')::uuid),
+  (select array(select unnest(permissions) order by 1) from public.role_preset where name = 'Member'),
+  'member A has exactly the Member preset in Society A');
 
 -- Someone with no membership anywhere.
 reset role;
