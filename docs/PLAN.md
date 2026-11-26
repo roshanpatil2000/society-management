@@ -127,15 +127,15 @@ Nobody can create an account, and so nobody can create a society, on their own:
 
 **Onboarding a new society (super-admin only)**
 
-There is no public sign-up or application form. The super-admin (a `platform_admin`, seeded by migration or SQL, never through the app) creates every society and its committee:
+There is no public sign-up or application form. The super-admin creates every society and its committee. The super-admin's email is allowed once with SQL (`insert into private.platform_admin_email ...`, see docs/AUTH-SETUP.md); their first sign-in creates the account and the `platform_admin` row, never through the app:
 
 1. In the **admin section of the web build**, shown only when `is_platform_admin()` is true, the super-admin fills in the society (name, registration number, address, financial year, billing settings, plan, quotas). Then they add a committee table with one row per person: name, email, optional phone, roles.
 2. Submitting calls the Edge Function **`admin-onboard-society`** (service role), which:
    - checks the caller's JWT with `is_platform_admin()`;
-   - calls `private.create_society_impl` (society, default roles, chart of accounts, cash account, doc counters; status `trial` or `active`);
-   - for each committee email, writes a pending `invite` (kind `committee`) so the Before User Created hook allows it, finds the auth user or creates one (`auth.admin.createUser({ email, email_confirm: true, user_metadata: { full_name } })`), then inserts `profiles`, an active `membership` and `membership_role` rows and marks the invite accepted;
+   - calls `admin_onboard_begin` (service role only), which runs `private.create_society_impl` (society in status `onboarding`, default roles; chart of accounts, cash account and doc counters are added by M4 and M5) and writes the committee invites in the same transaction;
+   - for each committee email, finds the auth user or creates one (`auth.admin.createUser({ email, email_confirm: true, user_metadata: { full_name } })`; the pending committee invite lets the Before User Created hook allow it), then calls `admin_onboard_finish`, which adds the memberships and roles, marks the invites accepted and moves the society to `trial` or `active`;
    - sends each committee member a welcome email ("Society X is set up. Log in with this email or Google").
-   - If any step fails, it deletes the society and any users it just created (a compensating rollback) and returns an error report.
+   - If any step fails, it deletes the users it just created and calls `admin_onboard_abort`, which revokes the invites and closes and soft-deletes the half-made society (no hard deletes), then returns an error report. A failed welcome email is reported but rolls nothing back.
 3. Committee members log in. Their user already exists, so the hooks let them through. They set up wings, flats and members.
 4. Later super-admin actions, all `platform.*` RPCs: `platform_set_committee_member` (add or replace), `platform_set_quotas`, `platform_set_society_status` (suspend, reactivate, close). There is no impersonation; support works from `audit_log` and `job_run`.
 
@@ -242,7 +242,7 @@ The Phase 1 schema has about 35 tables in the `public` schema, all with RLS enab
 | --- | --- |
 | `auth.users` | Managed by Supabase Auth (email, Google identity, sessions, OTP) |
 | `profiles` | id (= auth.users.id), full_name, email (required, mirrors auth), phone (optional contact), whatsapp_opt_in, whatsapp_opt_in_at, avatar_key |
-| `society` | id, name, registration_no, address, gstin, status (trial, active, suspended, closed), plan, trial_ends_at, quotas (jsonb: max_flats, max_members, emails_per_month, whatsapp_per_month, sms_per_month (default 0 = SMS off), storage_mb, invites_per_day; set only by `platform.*` RPCs), financial_year_start_month, timezone, locked_until (date; no financial writes on or before it), settings (jsonb: interest rate, grace days, approval_limit, gst_enabled, billing cycle, upi_id, payee_name, razorpay_enabled, rounding) |
+| `society` | id, name, registration_no, address, gstin, status (onboarding, trial, active, suspended, closed), plan, trial_ends_at, quotas (jsonb: max_flats, max_members, emails_per_month, whatsapp_per_month, sms_per_month (default 0 = SMS off), storage_mb, invites_per_day; set only by `platform.*` RPCs), financial_year_start_month, timezone, locked_until (date; no financial writes on or before it), settings (jsonb: interest rate, grace days, approval_limit, gst_enabled, billing cycle, upi_id, payee_name, razorpay_enabled, rounding) |
 | `setting_change` | society_id, key, old_value, new_value, requested_by, approved_by, status (pending, approved, rejected) — for sensitive settings, which change only through it |
 | `platform_admin` | user_id |
 | `permission` | key, module, description (seeded from `packages/shared`) |
@@ -537,8 +537,9 @@ Build one milestone at a time, in this order, and don't start the next until its
 - Migrations: `profiles` (with trigger on new auth user), `society` (with status, plan, quotas), `platform_admin` (super-admin seeded), `membership`, `role`, `membership_role`, `invite`, `society_usage`, `audit_log`, `job_run`.
 - Common columns (including `deleted_at`), `unique (society_id, id)` and composite-FK convention; generic audit trigger, attached to every tenant table from here on; immutability-trigger helper with column whitelist.
 - RLS helper functions (`is_member`, `has_permission`, `my_flat_ids` and `my_billable_flat_ids` as stubs until M4, `is_platform_admin`) and policies on these tables; `app.actor` convention for system callers.
-- Email OTP and Google login (local: Mailpit catches OTP emails); Before User Created hook and `send-email-hook`; Turnstile CAPTCHA; `private.society_is_active` in write policies.
-- `admin-onboard-society` and the admin section of the web build; `platform_set_*` RPCs; `create_invite`, `resend_invite`, `revoke_invite`, `accept_invite`; `seed.sql` with 2 demo societies and users for each role.
+- Email OTP and Google login on the backend (local: Mailpit catches the 6-digit code emails); Before User Created hook; `send-email-hook` (hosted projects only, see docs/AUTH-SETUP.md); `private.society_is_active` in write policies.
+- `admin-onboard-society` Edge Function; `platform_set_*` RPCs; `create_invite`, `resend_invite`, `revoke_invite`, `my_pending_invites`, `accept_invite`; `seed.sql` with 2 demo societies (M2 adds a user for each role preset).
+- The login screens, Turnstile on the code screen and the super-admin's admin section are app work and ship in M3, on top of the app shell.
 - CI checks: RLS on every table, `security_invoker` on every view.
 - **Done when:** all pgTAP isolation tests in the Multi-tenancy section pass; an insert into an M1 table appears in `audit_log` with its actor; an OTP request or Google sign-in for an uninvited email is rejected and sends nothing; a non-admin can't onboard a society; a committee member created by the super-admin can log in; a suspended society refuses writes but allows reads.
 
@@ -551,7 +552,8 @@ Build one milestone at a time, in this order, and don't start the next until its
 
 ### M3. App shell
 
-- Expo Router with `(auth)` and `(app)` groups; email OTP and Google login screens with a clear "not registered, ask your committee" message; consent notice; society picker; session in secure storage (native) / web storage (web).
+- Expo Router with `(auth)` and `(app)` groups; email OTP and Google login screens with a clear "not registered, ask your committee" message and Turnstile on the code screen; pending invites offered after login (`my_pending_invites`, `accept_invite`); consent notice; society picker; session in secure storage (native) / web storage (web).
+- Admin section of the web build, shown only to platform admins: onboard a society with its committee (calls `admin-onboard-society`), list societies, change status and quotas.
 - Permission-driven tab bar, `usePermission` and `<Can>`; Home and Profile; society switching; i18n set up with English, plus Marathi and Hindi string files.
 - `device` table and push-token registration.
 - **Done when:** logging in as a member, a treasurer and a staff user shows three different tab sets from the same build, on Android and on web.

@@ -15,8 +15,10 @@ Values never go in the repo. This file lists **names only** and where each one l
 
 | Name | Used by | Needed from |
 | --- | --- | --- |
-| `SMTP_API_KEY` (Resend or SES) | `send-email-hook`, `notify` | M1 |
-| `SEND_EMAIL_HOOK_SECRET` | `send-email-hook` (verifies calls from Supabase Auth) | M1 |
+| `RESEND_API_KEY` | `send-email-hook`, `admin-onboard-society` (welcome emails), later `notify` | M1 |
+| `SEND_EMAIL_HOOK_SECRET` | `send-email-hook` (verifies calls from Supabase Auth; format `v1,whsec_...`) | M1 |
+| `EMAIL_FROM` | Sender, e.g. `Society App <no-reply@your-domain>` | M1 |
+| `APP_URL` | Link in welcome emails | M1 |
 | `TURNSTILE_SECRET_KEY` | Auth CAPTCHA | M1 |
 | `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET` | Auth Google provider (dashboard / config) | M1 |
 | `EXPO_ACCESS_TOKEN` | `notify` (push) | M5 |
@@ -37,3 +39,7 @@ Values never go in the repo. This file lists **names only** and where each one l
 | `EXPO_PUBLIC_SENTRY_DSN` | M10 |
 
 Local values go in `apps/mobile/.env.local` (git-ignored); copy from `apps/mobile/.env.example`.
+
+Local Edge Function settings go in `supabase/functions/.env` (git-ignored); copy from `supabase/functions/.env.example`. Locally, email goes to Mailpit instead of Resend.
+
+Dashboard-only Auth settings (hooks, templates, CAPTCHA, Google) are listed in [AUTH-SETUP.md](AUTH-SETUP.md).

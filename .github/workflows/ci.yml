@@ -25,6 +25,8 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test
+      - run: pnpm functions:check
+      - run: pnpm functions:test
 
   database:
     name: Migrations and pgTAP

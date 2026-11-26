@@ -186,11 +186,11 @@
     "enabled": true,
     // The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
     // in emails.
-    "site_url": "http://127.0.0.1:3000",
+    "site_url": "http://localhost:8081",
     // The public URL that Auth serves on. Defaults to the API external URL with `/auth/v1` appended.
     // "external_url": "",
     // A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-    "additional_redirect_urls": ["https://127.0.0.1:3000"],
+    "additional_redirect_urls": ["http://localhost:8081", "societyapp://"],
     // How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
     "jwt_expiry": 3600,
     // JWT issuer URL. If not set, defaults to auth.external_url.
@@ -269,7 +269,7 @@
       // Number of characters used in the email OTP.
       "otp_length": 6,
       // Number of seconds before the email OTP expires (defaults to 1 hour).
-      "otp_expiry": 3600,
+      "otp_expiry": 600,
 
       // Use a production-ready SMTP server
       // "smtp": {
@@ -282,6 +282,18 @@
       //   "sender_name": "Admin"
       // },
 
+      // Sign-in emails carry the 6-digit code the app asks for. "confirmation" is the
+      // first sign-in of an invited person; "magic_link" is every later sign-in.
+      "template": {
+        "confirmation": {
+          "subject": "Your Society App sign-in code",
+          "content_path": "./supabase/templates/otp_code.html",
+        },
+        "magic_link": {
+          "subject": "Your Society App sign-in code",
+          "content_path": "./supabase/templates/otp_code.html",
+        },
+      },
       // Uncomment to customize email template
       // "template": {
       //   "invite": {
@@ -335,7 +347,16 @@
     //   "inactivity_timeout": "8h"
     // },
 
-    // This hook runs before a new user is created and allows developers to reject the request based on the incoming user object.
+    // No self-registration: only emails with a pending invite (or a bootstrap
+    // super-admin email) can create an account. See private.hook_before_user_created.
+    // The Send Email hook (send-email-hook Edge Function) is enabled on hosted
+    // projects only; locally, Mailpit catches auth emails.
+    "hook": {
+      "before_user_created": {
+        "enabled": true,
+        "uri": "pg-functions://postgres/private/hook_before_user_created",
+      },
+    },
     // "hook": {
     //   "before_user_created": {
     //     "enabled": true,
