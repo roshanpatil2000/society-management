@@ -165,6 +165,14 @@ describe('role presets', () => {
     }
   });
 
+  it('committee presets other than Chairman carry no flat-owner (.own) keys', () => {
+    // A committee member who owns a flat also gets the Member role, which brings the
+    // .own keys; the committee role itself must not show an empty My Bills tab.
+    for (const name of ['Secretary', 'Treasurer', 'Committee member', 'Auditor']) {
+      expect(preset(name).filter((k) => k.endsWith('.own'))).toEqual([]);
+    }
+  });
+
   it('Committee member views everything and holds the checker keys only', () => {
     expect([...preset('Committee member')].sort()).toEqual(
       [

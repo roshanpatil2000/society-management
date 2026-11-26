@@ -40,6 +40,10 @@ const moduleKeys = (...modules: (keyof typeof P)[]): PermissionKey[] =>
 const without = (keys: PermissionKey[], ...remove: PermissionKey[]): PermissionKey[] =>
   keys.filter((k) => !remove.includes(k));
 
+/** Flat-owner keys belong to the Member and Tenant roles, not to committee roles. */
+const withoutOwn = (keys: PermissionKey[]): PermissionKey[] =>
+  keys.filter((k) => !k.endsWith('.own'));
+
 export const ROLE_PRESETS: readonly RolePreset[] = [
   {
     name: 'Chairman',
@@ -50,12 +54,11 @@ export const ROLE_PRESETS: readonly RolePreset[] = [
     name: 'Secretary',
     description:
       'Runs the society: settings, members, notices, billing (no bill approval), complaints',
-    permissions: [
+    permissions: withoutOwn([
       ...without(moduleKeys('society', 'roles'), P.society.updateSensitive),
       P.members.invite,
       ...moduleKeys('flats'),
       P.members.viewAll,
-      P.members.viewOwn,
       P.members.manage,
       P.members.transfer,
       ...moduleKeys('notices'),
@@ -63,12 +66,12 @@ export const ROLE_PRESETS: readonly RolePreset[] = [
       ...without(moduleKeys('complaints'), P.complaints.escalationL2),
       P.dashboard.view,
       P.reports.view,
-    ],
+    ]),
   },
   {
     name: 'Treasurer',
     description: 'Billing, payments, expenses (create and pay) and accounts',
-    permissions: [
+    permissions: withoutOwn([
       P.society.view,
       P.notices.view,
       ...moduleKeys('bills', 'chargeHeads', 'payments'),
@@ -76,7 +79,7 @@ export const ROLE_PRESETS: readonly RolePreset[] = [
       P.expenses.create,
       P.expenses.pay,
       ...moduleKeys('accounts', 'reports', 'dashboard'),
-    ],
+    ]),
   },
   {
     name: 'Committee member',
