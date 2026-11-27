@@ -126,5 +126,39 @@
     "alreadyInvited": "इस व्यक्ति का आमंत्रण पहले से लंबित है.",
     "alreadyMember": "यह व्यक्ति पहले से सदस्य है.",
     "duplicateCode": "यह सोसाइटी कोड पहले से लिया जा चुका है."
+  },
+  "society": {
+    "flats": "विंग और फ्लैट",
+    "invite": "सदस्य को आमंत्रित करें",
+    "invites": "लंबित आमंत्रण",
+    "import": "फ्लैट आयात करें",
+    "wing": "विंग {{name}}",
+    "vacant": "खाली",
+    "floor": "मंज़िल {{floor}}",
+    "noFlats": "अभी कोई फ्लैट नहीं. Excel से आयात करें या एक-एक करके जोड़ें.",
+    "inviteOwner": "मालिक को आमंत्रित करें",
+    "inviteTenant": "किरायेदार को आमंत्रित करें",
+    "flatLabel": "फ्लैट {{flat}} · {{type}}",
+    "sendInvite": "आमंत्रण भेजें",
+    "invited": "{{email}} को आमंत्रण भेजा गया",
+    "shareInvite": "आमंत्रण साझा करें",
+    "shareMessage": "आपको सोसाइटी ऐप पर {{society}} में आमंत्रित किया गया है. {{link}} खोलें (सोसाइटी कोड {{code}}) और समिति द्वारा आमंत्रित ईमेल से साइन इन करें.",
+    "resend": "फिर से भेजें",
+    "revoke": "रद्द करें",
+    "expires": "{{date}} को समाप्त",
+    "noInvites": "कोई लंबित आमंत्रण नहीं.",
+    "importHint": "Wing और Flat No कॉलम वाली Excel या CSV फ़ाइल; Floor, Area (sq ft), Type, Owner Name और Owner Email वैकल्पिक. हर पंक्ति सही होने पर ही आयात होता है.",
+    "chooseFile": "फ़ाइल चुनें",
+    "ready": "{{flats}} फ्लैट, {{wings}} नए विंग और {{invites}} मालिक आमंत्रण आयात के लिए तैयार.",
+    "importButton": "आयात करें",
+    "imported": "{{count}} फ्लैट आयात किए गए.",
+    "rowProblem": "पंक्ति {{row}} · {{field}}: {{message}}",
+    "fileProblem": "फ़ाइल: {{message}}",
+    "yourFlat": "आपका फ्लैट"
+  },
+  "occupant": {
+    "owner": "मालिक",
+    "joint_owner": "संयुक्त मालिक",
+    "tenant": "किरायेदार"
   }
 }

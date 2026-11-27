@@ -126,5 +126,39 @@
     "alreadyInvited": "या व्यक्तीला आधीच प्रलंबित आमंत्रण आहे.",
     "alreadyMember": "ही व्यक्ती आधीच सदस्य आहे.",
     "duplicateCode": "हा सोसायटी कोड आधीच वापरात आहे."
+  },
+  "society": {
+    "flats": "विंग आणि सदनिका",
+    "invite": "सदस्याला आमंत्रित करा",
+    "invites": "प्रलंबित आमंत्रणे",
+    "import": "सदनिका आयात करा",
+    "wing": "विंग {{name}}",
+    "vacant": "रिकामी",
+    "floor": "मजला {{floor}}",
+    "noFlats": "अजून सदनिका नाहीत. Excel मधून आयात करा किंवा एकेक जोडा.",
+    "inviteOwner": "मालकाला आमंत्रित करा",
+    "inviteTenant": "भाडेकरूला आमंत्रित करा",
+    "flatLabel": "सदनिका {{flat}} · {{type}}",
+    "sendInvite": "आमंत्रण पाठवा",
+    "invited": "{{email}} ला आमंत्रण पाठवले",
+    "shareInvite": "आमंत्रण शेअर करा",
+    "shareMessage": "तुम्हाला सोसायटी ॲपवर {{society}} मध्ये आमंत्रित केले आहे. {{link}} उघडा (सोसायटी कोड {{code}}) आणि समितीने आमंत्रित केलेल्या ईमेलने साइन इन करा.",
+    "resend": "पुन्हा पाठवा",
+    "revoke": "रद्द करा",
+    "expires": "{{date}} ला संपते",
+    "noInvites": "प्रलंबित आमंत्रणे नाहीत.",
+    "importHint": "Wing आणि Flat No स्तंभ असलेली Excel किंवा CSV फाइल; Floor, Area (sq ft), Type, Owner Name आणि Owner Email ऐच्छिक. प्रत्येक ओळ बरोबर असल्याशिवाय काहीही आयात होत नाही.",
+    "chooseFile": "फाइल निवडा",
+    "ready": "{{flats}} सदनिका, {{wings}} नवीन विंग आणि {{invites}} मालक आमंत्रणे आयातीसाठी तयार.",
+    "importButton": "आयात करा",
+    "imported": "{{count}} सदनिका आयात झाल्या.",
+    "rowProblem": "ओळ {{row}} · {{field}}: {{message}}",
+    "fileProblem": "फाइल: {{message}}",
+    "yourFlat": "तुमची सदनिका"
+  },
+  "occupant": {
+    "owner": "मालक",
+    "joint_owner": "संयुक्त मालक",
+    "tenant": "भाडेकरू"
   }
 }
