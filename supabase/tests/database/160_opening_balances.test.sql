@@ -4,7 +4,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(20);
+select plan(21);
 
 create function pg_temp.as_user(p_email text) returns void language plpgsql as $$
 begin
@@ -89,6 +89,10 @@ reset role;
 select pg_temp.as_user('committee.a@society.test');
 select is((select sum(balance)::bigint from public.flat_ledger where society_id = current_setting('t.a')::uuid), 1000000::bigint,
   'the committee sees every flat ledger (arrears minus advances)');
+
+select is((select array_agg(c.column_name::text order by c.column_name) from information_schema.columns c
+            where c.table_schema = 'public' and c.table_name = 'flat_ledger' and c.column_name in ('journal_line_id', 'created_at')),
+  array['created_at', 'journal_line_id'], 'flat_ledger exposes the line id and time for a stable order');
 
 -- ---- permissions --------------------------------------------------------------------------
 reset role;
