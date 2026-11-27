@@ -1100,11 +1100,13 @@ export type Database = {
       flat_ledger: {
         Row: {
           balance: number | null;
+          created_at: string;
           credit: number;
           debit: number;
           entry_date: string;
           flat_id: string | null;
           journal_entry_id: string;
+          journal_line_id: string;
           narration: string;
           society_id: string;
           source_id: string | null;
