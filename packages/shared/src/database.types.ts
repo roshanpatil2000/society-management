@@ -263,6 +263,99 @@ export type Database = {
           },
         ];
       };
+      flat_transfer: {
+        Row: {
+          buyers: NonNullable<Json>;
+          created_at: string;
+          created_by: string | null;
+          decided_at: string | null;
+          decided_by: string | null;
+          deleted_at: string | null;
+          flat_id: string;
+          from_occupant_ids: string[];
+          id: string;
+          note: string | null;
+          reject_reason: string | null;
+          requested_by: string;
+          share_cert_no: string | null;
+          society_id: string;
+          status: string;
+          transfer_date: string;
+          transfer_fee: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          buyers: NonNullable<Json>;
+          created_at?: string;
+          created_by?: string | null;
+          decided_at?: string | null;
+          decided_by?: string | null;
+          deleted_at?: string | null;
+          flat_id: string;
+          from_occupant_ids?: string[];
+          id?: string;
+          note?: string | null;
+          reject_reason?: string | null;
+          requested_by: string;
+          share_cert_no?: string | null;
+          society_id: string;
+          status?: string;
+          transfer_date: string;
+          transfer_fee?: number;
+          updated_at?: string;
+        };
+        Update: {
+          buyers?: NonNullable<Json>;
+          created_at?: string;
+          created_by?: string | null;
+          decided_at?: string | null;
+          decided_by?: string | null;
+          deleted_at?: string | null;
+          flat_id?: string;
+          from_occupant_ids?: string[];
+          id?: string;
+          note?: string | null;
+          reject_reason?: string | null;
+          requested_by?: string;
+          share_cert_no?: string | null;
+          society_id?: string;
+          status?: string;
+          transfer_date?: string;
+          transfer_fee?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'flat_transfer_decided_by_fkey';
+            columns: ['decided_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'flat_transfer_requested_by_fkey';
+            columns: ['requested_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'flat_transfer_society_id_fkey';
+            columns: ['society_id'];
+            isOneToOne: false;
+            referencedRelation: 'society';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'flat_transfer_society_id_flat_id_fkey';
+            columns: ['society_id', 'flat_id'];
+            isOneToOne: false;
+            referencedRelation: 'flat';
+            referencedColumns: ['society_id', 'id'];
+          },
+        ];
+      };
       invite: {
         Row: {
           accepted_at: string | null;
@@ -1175,6 +1268,10 @@ export type Database = {
         };
         Returns: Json;
       };
+      approve_flat_transfer: {
+        Args: { p_decision: string; p_reason?: string; p_transfer_id: string };
+        Returns: Json;
+      };
       approve_setting_change: {
         Args: { p_change_id: string; p_comment?: string; p_decision: string };
         Returns: undefined;
@@ -1259,6 +1356,19 @@ export type Database = {
         Returns: Json;
       };
       register_device: { Args: { p_platform: string; p_token: string }; Returns: undefined };
+      request_flat_transfer: {
+        Args: {
+          p_buyers: Json;
+          p_flat_id: string;
+          p_from_occupant_ids: string[];
+          p_note?: string;
+          p_share_cert_no?: string;
+          p_society_id: string;
+          p_transfer_date: string;
+          p_transfer_fee?: number;
+        };
+        Returns: string;
+      };
       request_setting_change: {
         Args: { p_key: string; p_society_id: string; p_value: Json };
         Returns: string;
