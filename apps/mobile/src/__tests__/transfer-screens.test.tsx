@@ -72,7 +72,9 @@ describe('RequestTransferScreen', () => {
     mockedTransfers.requestTransfer.mockResolvedValue('t1');
     await renderScreen(<RequestTransferScreen />);
     expect(await screen.findByText('Transfer A-101')).toBeTruthy();
-    expect(screen.getByRole('checkbox', { name: 'Ravi Deshmukh (Owner)', checked: true })).toBeTruthy();
+    expect(
+      screen.getByRole('checkbox', { name: 'Ravi Deshmukh (Owner)', checked: true }),
+    ).toBeTruthy();
     expect(screen.queryByRole('checkbox', { name: 'Divya Rao (Tenant)' })).toBeNull();
     await fireEvent.changeText(screen.getByLabelText('Buyer email'), 'Meera@Example.com');
     await fireEvent.changeText(screen.getByLabelText('Buyer name'), 'Meera Iyer');
