@@ -73,9 +73,6 @@
       "integrity": "sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg=="
     }
   },
-  "remote": {
-    "https://cdn.sheetjs.com/xlsx-0.20.3/package/xlsx.mjs": "1a0fb062ee9781b13f6687371b202aaefc53b6ce55b530c027e01f9c087b77db"
-  },
   "workspace": {
     "dependencies": [
       "jsr:@std/assert@1",

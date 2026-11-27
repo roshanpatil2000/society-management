@@ -1,6 +1,7 @@
 // Reads the first sheet of an Excel (.xlsx/.xls) or CSV file into flat rows,
 // matching common heading names. Validation of the values happens in the
 // database (import_flats), which reports problems by spreadsheet row number.
+// @deno-types="../_vendor/sheetjs-0.20.3/types.d.ts"
 import * as XLSX from 'xlsx';
 
 export interface FlatRow {
