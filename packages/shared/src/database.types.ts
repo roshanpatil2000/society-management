@@ -949,6 +949,10 @@ export type Database = {
       };
       email_hook_check: { Args: { p_action: string; p_email: string }; Returns: Json };
       get_my_permissions: { Args: { p_society_id: string }; Returns: string[] };
+      import_flats: {
+        Args: { p_dry_run?: boolean; p_rows: Json; p_society_id: string };
+        Returns: Json;
+      };
       member_directory: {
         Args: { p_society_id: string };
         Returns: {
