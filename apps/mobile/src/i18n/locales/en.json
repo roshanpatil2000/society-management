@@ -128,7 +128,11 @@
     "duplicateCode": "That society code is already taken.",
     "openingAlreadyPosted": "Opening balances were already posted for this society.",
     "booksNotEmpty": "Opening balances must be posted before any other entry in the books.",
-    "periodLocked": "The books are closed for that date."
+    "periodLocked": "The books are closed for that date.",
+    "transferPending": "This flat already has a transfer waiting for approval.",
+    "transferDecided": "This transfer was already approved or rejected.",
+    "makerChecker": "Someone other than the requester must approve this.",
+    "invalidTransfer": "Check the sellers, buyers and date: sellers must be current owners who moved in before the transfer date, and at least one buyer must be an owner."
   },
   "society": {
     "flats": "Wings and flats",
@@ -184,5 +188,31 @@
     "noEntries": "No dues and no entries yet.",
     "due": "Due {{amount}}",
     "credit": "Credit {{amount}}"
+  },
+  "transfers": {
+    "start": "Transfer flat",
+    "title": "Transfer {{flat}}",
+    "sellers": "Owners leaving",
+    "noSellers": "No current owners",
+    "buyer": "New owner",
+    "buyerEmail": "Buyer email",
+    "buyerName": "Buyer name",
+    "date": "Transfer date",
+    "cert": "Share certificate number",
+    "fee": "Transfer fee (₹)",
+    "note": "Note (optional)",
+    "submit": "Request transfer",
+    "requested": "Transfer requested. Another committee member must approve it.",
+    "invalidFee": "Enter the fee in rupees, like 25000 or 25,000.50",
+    "list": "Flat transfers",
+    "none": "No transfers waiting for approval.",
+    "details": "Share certificate {{cert}} · Fee {{fee}}",
+    "mine": "You requested this; another committee member must approve it.",
+    "approve": "Approve",
+    "reject": "Reject",
+    "reason": "Reason",
+    "reasonNeeded": "Give a reason for rejecting.",
+    "approved": "Approved: {{closed}} owner moved out, {{added}} added, {{invited}} invited.",
+    "rejected": "Transfer rejected."
   }
 }

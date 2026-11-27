@@ -58,6 +58,16 @@ export function FlatDetailScreen() {
           {t('society.inviteTenant')}
         </Button>
       </Can>
+      <Can permission="members.manage">
+        <Button
+          icon="swap-horizontal"
+          onPress={() =>
+            router.push({ pathname: '/society/transfer', params: { flatId: flat.id } })
+          }
+        >
+          {t('transfers.start')}
+        </Button>
+      </Can>
       <FlatStatement flatId={flat.id} />
     </Screen>
   );

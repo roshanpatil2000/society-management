@@ -34,6 +34,12 @@ const SECTIONS: { titleKey: string; icon: string; href: Href; anyOf: PermissionK
     anyOf: ['flats.manage'],
   },
   {
+    titleKey: 'transfers.list',
+    icon: 'swap-horizontal',
+    href: '/society/transfers',
+    anyOf: ['members.manage', 'members.transfer'],
+  },
+  {
     titleKey: 'accounts.opening',
     icon: 'scale-balance',
     href: '/society/opening-balances',
