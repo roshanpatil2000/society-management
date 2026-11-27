@@ -2,6 +2,7 @@ import { getLocales } from 'expo-localization';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import { restoreLanguage } from './language';
 import en from './locales/en.json';
 import hi from './locales/hi.json';
 import mr from './locales/mr.json';
@@ -25,5 +26,8 @@ void i18n.use(initReactI18next).init({
   interpolation: { escapeValue: false },
   returnNull: false,
 });
+
+// Apply the language the person chose last time (the device language until then).
+void restoreLanguage(i18n);
 
 export default i18n;
