@@ -130,3 +130,18 @@ export const ROLE_PRESETS: readonly RolePreset[] = [
     permissions: VIEW_EVERYTHING,
   },
 ];
+
+/**
+ * Resident-level keys: everything a Member or Tenant gets. They only reach a
+ * person's own flat or society-wide public information, so anyone allowed to
+ * invite or manage roles may grant them without holding them. Committee powers
+ * still need the granter to hold the key. The permission table marks the same
+ * keys with `resident = true`.
+ */
+export const RESIDENT_KEYS: readonly PermissionKey[] = [
+  ...new Set(
+    ROLE_PRESETS.filter((p) => p.name === 'Member' || p.name === 'Tenant').flatMap(
+      (p) => p.permissions,
+    ),
+  ),
+];

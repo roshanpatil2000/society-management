@@ -6,7 +6,7 @@ import {
   PERMISSIONS,
   type PermissionKey,
 } from '../permissions';
-import { ROLE_PRESETS, VIEW_EVERYTHING } from '../role-presets';
+import { RESIDENT_KEYS, ROLE_PRESETS, VIEW_EVERYTHING } from '../role-presets';
 
 const preset = (name: string): readonly PermissionKey[] => {
   const found = ROLE_PRESETS.find((p) => p.name === name);
@@ -230,5 +230,22 @@ describe('role presets', () => {
       'reports.view',
       'society.view',
     ]);
+  });
+});
+
+describe('resident keys', () => {
+  it('are exactly the keys every Member or Tenant gets', () => {
+    expect([...RESIDENT_KEYS].sort()).toEqual(
+      [...new Set([...preset('Member'), ...preset('Tenant')])].sort(),
+    );
+  });
+
+  it('carry no committee power', () => {
+    for (const key of RESIDENT_KEYS) {
+      expect(key).not.toMatch(
+        /\.(manage|approve|verify|generate|invite|update|refund|pay|assign|send|record_offline|all)$/,
+      );
+      expect(key).not.toMatch(/^(roles|accounts|audit_log|platform)\./);
+    }
   });
 });
