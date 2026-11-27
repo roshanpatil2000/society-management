@@ -4,7 +4,7 @@ import postgres from 'postgres';
 import { afterAll, describe, expect, it } from 'vitest';
 
 import { ALL_PERMISSION_KEYS, permissionModule } from '../permissions';
-import { ROLE_PRESETS } from '../role-presets';
+import { RESIDENT_KEYS, ROLE_PRESETS } from '../role-presets';
 
 const sql = postgres(
   process.env.DATABASE_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54322/postgres',
@@ -34,5 +34,12 @@ describe('database matches packages/shared', () => {
     expect(rows.map((r) => ({ name: r.name, permissions: [...r.permissions].sort() }))).toEqual(
       ROLE_PRESETS.map((p) => ({ name: p.name, permissions: [...p.permissions].sort() })),
     );
+  });
+
+  it('permission.resident marks exactly the resident keys', async () => {
+    const rows = await sql<
+      { key: string }[]
+    >`select key from public.permission where resident order by key`;
+    expect(rows.map((r) => r.key)).toEqual([...RESIDENT_KEYS].sort());
   });
 });

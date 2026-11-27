@@ -3,7 +3,7 @@
 begin;
 create extension if not exists pgtap with schema extensions;
 
-select plan(25);
+select plan(26);
 
 create function pg_temp.as_user(p_email text) returns void language plpgsql as $$
 begin
@@ -103,6 +103,9 @@ reset role;
 select pg_temp.as_user('secretary.a@society.test');
 select throws_ok(format('select public.assign_roles(%L, array[%L]::uuid[])', current_setting('t.member_a'), current_setting('t.r_chair_a')),
   '42501', null, 'the secretary cannot give anyone the Chairman role');
+select lives_ok(format('select public.assign_roles((select m.id from public.membership m join public.profiles p on p.id = m.user_id where p.email = %L), array[%L, (select id from public.role where society_id = %L and name = %L)]::uuid[])',
+  'tenant.a@society.test', current_setting('t.r_member_a'), current_setting('t.a'), 'Tenant'),
+  'the secretary can give a resident the Member role (resident keys need not be held)');
 select throws_ok(format('select public.assign_roles(%L, array[%L]::uuid[])', current_setting('t.treasurer_a'), current_setting('t.r_member_a')),
   '42501', null, 'the secretary cannot take the Treasurer role away (it holds keys they lack)');
 
