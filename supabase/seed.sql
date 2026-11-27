@@ -9,6 +9,8 @@
 --   staff.a@society.test     Staff             auditor.a@society.test    Auditor
 -- Blue Ridge CHS: chair.b@society.test (Chairman), member.b@society.test (Member)
 -- Society codes (tenant discovery): greenpark, blueridge.
+-- Flats: Green Park A-101 (Ravi, owner), A-102 (Divya, tenant), B-201 (Asha, owner),
+--        A-201, A-202, B-101 empty; Blue Ridge C-1 (Karan, owner).
 -- Pending invite: invitee.a@society.test (Member, Green Park CHS), so its first login creates the account.
 
 insert into private.platform_admin_email (email) values ('admin@society.test');
@@ -67,6 +69,29 @@ begin
     where m.user_id = people[i][1]::uuid
       and m.society_id = case people[i][4] when 'A' then society_a else society_b end;
   end loop;
+
+  -- Wings, flats and occupants.
+  insert into public.wing (society_id, name, sort_order) values (society_a, 'A', 1), (society_a, 'B', 2), (society_b, 'C', 1);
+  insert into public.flat (society_id, wing_id, number, floor, area_sqft, flat_type)
+  select w.society_id, w.id, f.number, f.floor, f.area, f.kind
+  from public.wing w
+  join (values
+    ('A', '101', 1, 650, '2BHK'), ('A', '102', 1, 650, '2BHK'), ('A', '201', 2, 900, '3BHK'), ('A', '202', 2, 900, '3BHK'),
+    ('B', '101', 1, 480, '1BHK'), ('B', '201', 2, 720, '2BHK'),
+    ('C', '1', 0, 1100, '3BHK')
+  ) as f(wing, number, floor, area, kind) on f.wing = w.name;
+
+  insert into public.flat_occupant (society_id, flat_id, user_id, type, share_cert_no, can_view_bills)
+  select f.society_id, f.id, p.id, o.kind, o.cert, o.bills
+  from (values
+    ('A', '101', 'member.a@society.test', 'owner', 'GP-SC-0101', false),
+    ('A', '102', 'tenant.a@society.test', 'tenant', null, false),
+    ('B', '201', 'chair.a@society.test', 'owner', 'GP-SC-0502', false),
+    ('C', '1', 'member.b@society.test', 'owner', 'BR-SC-0001', false)
+  ) as o(wing, number, email, kind, cert, bills)
+  join public.wing w on w.name = o.wing
+  join public.flat f on f.wing_id = w.id and f.number = o.number
+  join public.profiles p on p.email = o.email;
 
   insert into public.invite (society_id, email, full_name, role_ids, created_by)
   select society_a, 'invitee.a@society.test', 'Neha Patil', array[r.id], '00000000-0000-4000-8000-0000000000a1'

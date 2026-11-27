@@ -85,6 +85,124 @@ export type Database = {
           },
         ];
       };
+      flat: {
+        Row: {
+          area_sqft: number | null;
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          flat_type: string | null;
+          floor: number | null;
+          id: string;
+          number: string;
+          parking_slot: string | null;
+          society_id: string;
+          updated_at: string;
+          wing_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          area_sqft?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          flat_type?: string | null;
+          floor?: number | null;
+          id?: string;
+          number: string;
+          parking_slot?: string | null;
+          society_id: string;
+          updated_at?: string;
+          wing_id: string;
+        };
+        Update: {
+          area_sqft?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          flat_type?: string | null;
+          floor?: number | null;
+          id?: string;
+          number?: string;
+          parking_slot?: string | null;
+          society_id?: string;
+          updated_at?: string;
+          wing_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'flat_society_id_wing_id_fkey';
+            columns: ['society_id', 'wing_id'];
+            isOneToOne: false;
+            referencedRelation: 'wing';
+            referencedColumns: ['society_id', 'id'];
+          },
+        ];
+      };
+      flat_occupant: {
+        Row: {
+          can_view_bills: boolean;
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          flat_id: string;
+          from_date: string;
+          id: string;
+          share_cert_no: string | null;
+          society_id: string;
+          to_date: string | null;
+          type: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          can_view_bills?: boolean;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          flat_id: string;
+          from_date?: string;
+          id?: string;
+          share_cert_no?: string | null;
+          society_id: string;
+          to_date?: string | null;
+          type: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          can_view_bills?: boolean;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          flat_id?: string;
+          from_date?: string;
+          id?: string;
+          share_cert_no?: string | null;
+          society_id?: string;
+          to_date?: string | null;
+          type?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'flat_occupant_society_id_flat_id_fkey';
+            columns: ['society_id', 'flat_id'];
+            isOneToOne: false;
+            referencedRelation: 'flat';
+            referencedColumns: ['society_id', 'id'];
+          },
+          {
+            foreignKeyName: 'flat_occupant_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       invite: {
         Row: {
           accepted_at: string | null;
@@ -99,6 +217,7 @@ export type Database = {
           id: string;
           kind: string;
           last_sent_at: string;
+          occupant_type: string | null;
           role_ids: string[];
           society_id: string;
           status: string;
@@ -119,6 +238,7 @@ export type Database = {
           id?: string;
           kind?: string;
           last_sent_at?: string;
+          occupant_type?: string | null;
           role_ids?: string[];
           society_id: string;
           status?: string;
@@ -138,6 +258,7 @@ export type Database = {
           id?: string;
           kind?: string;
           last_sent_at?: string;
+          occupant_type?: string | null;
           role_ids?: string[];
           society_id?: string;
           status?: string;
@@ -151,6 +272,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: 'profiles';
             referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'invite_flat_fkey';
+            columns: ['society_id', 'flat_id'];
+            isOneToOne: false;
+            referencedRelation: 'flat';
+            referencedColumns: ['society_id', 'id'];
           },
           {
             foreignKeyName: 'invite_society_id_fkey';
@@ -302,17 +430,20 @@ export type Database = {
           description: string;
           key: string;
           module: string;
+          resident: boolean;
         };
         ComputedFields: never;
         Insert: {
           description: string;
           key: string;
           module: string;
+          resident?: boolean;
         };
         Update: {
           description?: string;
           key?: string;
           module?: string;
+          resident?: boolean;
         };
         Relationships: [];
       };
@@ -685,6 +816,48 @@ export type Database = {
           },
         ];
       };
+      wing: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          id: string;
+          name: string;
+          society_id: string;
+          sort_order: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          name: string;
+          society_id: string;
+          sort_order?: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          name?: string;
+          society_id?: string;
+          sort_order?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'wing_society_id_fkey';
+            columns: ['society_id'];
+            isOneToOne: false;
+            referencedRelation: 'society';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: {
       my_memberships: {
@@ -749,6 +922,7 @@ export type Database = {
           p_email: string;
           p_flat_id?: string;
           p_full_name?: string;
+          p_occupant_type?: string;
           p_role_ids: string[];
           p_society_id: string;
         };
@@ -775,6 +949,14 @@ export type Database = {
       };
       email_hook_check: { Args: { p_action: string; p_email: string }; Returns: Json };
       get_my_permissions: { Args: { p_society_id: string }; Returns: string[] };
+      member_directory: {
+        Args: { p_society_id: string };
+        Returns: {
+          flats: string[];
+          full_name: string;
+          user_id: string;
+        }[];
+      };
       my_pending_invites: {
         Args: Record<PropertyKey, never>;
         Returns: {
