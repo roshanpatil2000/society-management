@@ -43,6 +43,66 @@ export type Database = {
         };
         Relationships: [];
       };
+      bank_account: {
+        Row: {
+          account_last4: string | null;
+          bank: string | null;
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          id: string;
+          ifsc: string | null;
+          is_default: boolean;
+          kind: string;
+          ledger_account_id: string;
+          name: string;
+          society_id: string;
+          updated_at: string;
+          upi_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          account_last4?: string | null;
+          bank?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          ifsc?: string | null;
+          is_default?: boolean;
+          kind: string;
+          ledger_account_id: string;
+          name: string;
+          society_id: string;
+          updated_at?: string;
+          upi_id?: string | null;
+        };
+        Update: {
+          account_last4?: string | null;
+          bank?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          ifsc?: string | null;
+          is_default?: boolean;
+          kind?: string;
+          ledger_account_id?: string;
+          name?: string;
+          society_id?: string;
+          updated_at?: string;
+          upi_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'bank_account_society_id_ledger_account_id_fkey';
+            columns: ['society_id', 'ledger_account_id'];
+            isOneToOne: false;
+            referencedRelation: 'ledger_account';
+            referencedColumns: ['society_id', 'id'];
+          },
+        ];
+      };
       device: {
         Row: {
           created_at: string;
@@ -319,6 +379,183 @@ export type Database = {
           status?: string;
         };
         Relationships: [];
+      };
+      journal_entry: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          entry_date: string;
+          id: string;
+          narration: string;
+          society_id: string;
+          source_id: string | null;
+          source_type: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          entry_date: string;
+          id?: string;
+          narration: string;
+          society_id: string;
+          source_id?: string | null;
+          source_type: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          entry_date?: string;
+          id?: string;
+          narration?: string;
+          society_id?: string;
+          source_id?: string | null;
+          source_type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'journal_entry_society_id_fkey';
+            columns: ['society_id'];
+            isOneToOne: false;
+            referencedRelation: 'society';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      journal_line: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          credit: number;
+          debit: number;
+          deleted_at: string | null;
+          flat_id: string | null;
+          id: string;
+          journal_entry_id: string;
+          ledger_account_id: string;
+          narration: string | null;
+          society_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          credit?: number;
+          debit?: number;
+          deleted_at?: string | null;
+          flat_id?: string | null;
+          id?: string;
+          journal_entry_id: string;
+          ledger_account_id: string;
+          narration?: string | null;
+          society_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          credit?: number;
+          debit?: number;
+          deleted_at?: string | null;
+          flat_id?: string | null;
+          id?: string;
+          journal_entry_id?: string;
+          ledger_account_id?: string;
+          narration?: string | null;
+          society_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'journal_line_society_id_flat_id_fkey';
+            columns: ['society_id', 'flat_id'];
+            isOneToOne: false;
+            referencedRelation: 'flat';
+            referencedColumns: ['society_id', 'id'];
+          },
+          {
+            foreignKeyName: 'journal_line_society_id_journal_entry_id_fkey';
+            columns: ['society_id', 'journal_entry_id'];
+            isOneToOne: false;
+            referencedRelation: 'journal_entry';
+            referencedColumns: ['society_id', 'id'];
+          },
+          {
+            foreignKeyName: 'journal_line_society_id_ledger_account_id_fkey';
+            columns: ['society_id', 'ledger_account_id'];
+            isOneToOne: false;
+            referencedRelation: 'ledger_account';
+            referencedColumns: ['society_id', 'id'];
+          },
+        ];
+      };
+      ledger_account: {
+        Row: {
+          code: string;
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          id: string;
+          is_system: boolean;
+          name: string;
+          parent_id: string | null;
+          society_id: string;
+          system_key: string | null;
+          type: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          code: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          is_system?: boolean;
+          name: string;
+          parent_id?: string | null;
+          society_id: string;
+          system_key?: string | null;
+          type: string;
+          updated_at?: string;
+        };
+        Update: {
+          code?: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          id?: string;
+          is_system?: boolean;
+          name?: string;
+          parent_id?: string | null;
+          society_id?: string;
+          system_key?: string | null;
+          type?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'ledger_account_society_id_fkey';
+            columns: ['society_id'];
+            isOneToOne: false;
+            referencedRelation: 'society';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'ledger_account_society_id_parent_id_fkey';
+            columns: ['society_id', 'parent_id'];
+            isOneToOne: false;
+            referencedRelation: 'ledger_account';
+            referencedColumns: ['society_id', 'id'];
+          },
+        ];
       };
       membership: {
         Row: {
