@@ -125,7 +125,10 @@
     "societyInactive": "This society is not active right now.",
     "alreadyInvited": "This person already has a pending invite.",
     "alreadyMember": "This person is already a member.",
-    "duplicateCode": "That society code is already taken."
+    "duplicateCode": "That society code is already taken.",
+    "openingAlreadyPosted": "Opening balances were already posted for this society.",
+    "booksNotEmpty": "Opening balances must be posted before any other entry in the books.",
+    "periodLocked": "The books are closed for that date."
   },
   "society": {
     "flats": "Wings and flats",
@@ -160,5 +163,26 @@
     "owner": "Owner",
     "joint_owner": "Joint owner",
     "tenant": "Tenant"
+  },
+  "accounts": {
+    "opening": "Opening balances",
+    "openingHint": "Use an Excel file with a Flats sheet (Wing, Flat No, Arrears, Advance) and an Accounts sheet (Code, Debit, Credit), amounts in rupees. Debits and credits must be equal; put any difference in Surplus / Deficit (3900). This is done once, before the first bills.",
+    "asOf": "As of date",
+    "invalidDate": "Enter the date as YYYY-MM-DD, for example 2026-03-31.",
+    "ready": "Ready to post opening balances for {{flats}} flats. Debits {{debit}}, credits {{credit}}.",
+    "post": "Post opening balances",
+    "posted": "Opening balances posted.",
+    "rowProblem": "{{sheet}} · Row {{row}} · {{field}}: {{message}}",
+    "sheet": {
+      "flats": "Flats",
+      "accounts": "Accounts"
+    },
+    "statement": "Statement",
+    "balanceDue": "Balance due {{amount}}",
+    "advance": "Advance {{amount}}",
+    "noDues": "No dues",
+    "noEntries": "No dues and no entries yet.",
+    "due": "Due {{amount}}",
+    "credit": "Credit {{amount}}"
   }
 }

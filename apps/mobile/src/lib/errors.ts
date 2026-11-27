@@ -11,6 +11,9 @@ const RULES: readonly [RegExp, string][] = [
   [/^already_invited/, 'errors.alreadyInvited'],
   [/^already_member/, 'errors.alreadyMember'],
   [/^duplicate_slug/, 'errors.duplicateCode'],
+  [/^opening_already_posted/, 'errors.openingAlreadyPosted'],
+  [/^books_not_empty/, 'errors.booksNotEmpty'],
+  [/^period_locked/, 'errors.periodLocked'],
   [/token has expired or is invalid|otp_expired|invalid.*(otp|token)/i, 'errors.codeInvalid'],
   [/rate limit|too many/i, 'errors.tooMany'],
 ];

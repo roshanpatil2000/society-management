@@ -33,6 +33,12 @@ const SECTIONS: { titleKey: string; icon: string; href: Href; anyOf: PermissionK
     href: '/society/import',
     anyOf: ['flats.manage'],
   },
+  {
+    titleKey: 'accounts.opening',
+    icon: 'scale-balance',
+    href: '/society/opening-balances',
+    anyOf: ['accounts.opening_balance'],
+  },
 ];
 
 export function SocietyHomeScreen() {
