@@ -14,6 +14,10 @@ const RULES: readonly [RegExp, string][] = [
   [/^opening_already_posted/, 'errors.openingAlreadyPosted'],
   [/^books_not_empty/, 'errors.booksNotEmpty'],
   [/^period_locked/, 'errors.periodLocked'],
+  [/^transfer_pending/, 'errors.transferPending'],
+  [/^transfer_not_pending/, 'errors.transferDecided'],
+  [/^maker_checker/, 'errors.makerChecker'],
+  [/^invalid_transfer/, 'errors.invalidTransfer'],
   [/token has expired or is invalid|otp_expired|invalid.*(otp|token)/i, 'errors.codeInvalid'],
   [/rate limit|too many/i, 'errors.tooMany'],
 ];
