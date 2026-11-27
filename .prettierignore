@@ -9,3 +9,4 @@ apps/mobile/android
 apps/mobile/ios
 *.md
 apps/mobile/expo-env.d.ts
+supabase/functions/_vendor

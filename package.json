@@ -17,8 +17,8 @@
     "db:start": "supabase start",
     "db:reset": "supabase db reset",
     "db:test": "supabase test db",
-    "functions:check": "for f in supabase/functions/*/index.ts; do deno check --allow-import=cdn.sheetjs.com,jsr.io,registry.npmjs.org --config \"$(dirname $f)/deno.json\" \"$f\" || exit 1; done",
-    "functions:test": "for d in supabase/functions/*/; do [ -f \"$d/deno.json\" ] && { deno test --allow-env --allow-import=cdn.sheetjs.com,jsr.io,registry.npmjs.org --config \"$d/deno.json\" \"$d\" || exit 1; }; done; true"
+    "functions:check": "for f in supabase/functions/*/index.ts; do deno check --allow-import=jsr.io,registry.npmjs.org --config \"$(dirname $f)/deno.json\" \"$f\" || exit 1; done",
+    "functions:test": "for d in supabase/functions/*/; do [ -f \"$d/deno.json\" ] && { deno test --allow-env --allow-import=jsr.io,registry.npmjs.org --config \"$d/deno.json\" \"$d\" || exit 1; }; done; true"
   },
   "devDependencies": {
     "deno": "2.9.6",
