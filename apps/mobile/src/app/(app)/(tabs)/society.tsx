@@ -1,5 +1,1 @@
-import { ComingSoon } from '@/components/ComingSoon';
-
-export default function Route() {
-  return <ComingSoon titleKey="tabs.society" />;
-}
+export { SocietyHomeScreen as default } from '@/features/society/SocietyHomeScreen';

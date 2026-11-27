@@ -126,5 +126,39 @@
     "alreadyInvited": "This person already has a pending invite.",
     "alreadyMember": "This person is already a member.",
     "duplicateCode": "That society code is already taken."
+  },
+  "society": {
+    "flats": "Wings and flats",
+    "invite": "Invite a member",
+    "invites": "Pending invites",
+    "import": "Import flats",
+    "wing": "Wing {{name}}",
+    "vacant": "Vacant",
+    "floor": "Floor {{floor}}",
+    "noFlats": "No flats yet. Import them from Excel or add them one by one.",
+    "inviteOwner": "Invite owner",
+    "inviteTenant": "Invite tenant",
+    "flatLabel": "Flat {{flat}} · {{type}}",
+    "sendInvite": "Send invite",
+    "invited": "Invite sent to {{email}}",
+    "shareInvite": "Share invite",
+    "shareMessage": "You are invited to {{society}} on Society App. Open {{link}} (society code {{code}}) and sign in with the email the committee invited.",
+    "resend": "Resend",
+    "revoke": "Revoke",
+    "expires": "expires {{date}}",
+    "noInvites": "No pending invites.",
+    "importHint": "Excel or CSV with the columns Wing and Flat No; Floor, Area (sq ft), Type, Owner Name and Owner Email are optional. Nothing is imported unless every row is correct.",
+    "chooseFile": "Choose file",
+    "ready": "Ready to import {{flats}} flats, {{wings}} new wings and {{invites}} owner invites.",
+    "importButton": "Import",
+    "imported": "Imported {{count}} flats.",
+    "rowProblem": "Row {{row}} · {{field}}: {{message}}",
+    "fileProblem": "File: {{message}}",
+    "yourFlat": "Your flat"
+  },
+  "occupant": {
+    "owner": "Owner",
+    "joint_owner": "Joint owner",
+    "tenant": "Tenant"
   }
 }
