@@ -11,6 +11,7 @@ import { router } from '@/test/router-mock';
 
 jest.mock('expo-router', () => require('@/test/router-mock').routerMock);
 jest.mock('@/features/auth/api');
+jest.mock('@/features/society/api', () => ({ myFlats: jest.fn().mockResolvedValue([]) }));
 const mocked = jest.mocked(authApi);
 
 const access = (over: Partial<Access> = {}): Access => ({
