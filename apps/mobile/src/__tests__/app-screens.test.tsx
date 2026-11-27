@@ -67,11 +67,17 @@ describe('ProfileScreen', () => {
     expect(useSessionStore.getState().activeSocietyId).toBeNull();
   });
 
-  it('switches the language', async () => {
+  it('switches the language and marks the chosen one as selected', async () => {
     await renderScreen(<ProfileScreen access={access()} />);
     await fireEvent.press(screen.getByText('मराठी'));
     expect(i18n.language).toBe('mr');
     expect(await screen.findByText('साइन आउट')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'मराठी' }).props.accessibilityState?.checked).toBe(
+      true,
+    );
+    expect(screen.getByRole('button', { name: 'English' }).props.accessibilityState?.checked).toBe(
+      false,
+    );
   });
 
   it('signs out', async () => {
