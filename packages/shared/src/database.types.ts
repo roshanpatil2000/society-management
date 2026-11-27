@@ -103,6 +103,82 @@ export type Database = {
           },
         ];
       };
+      charge_head: {
+        Row: {
+          billed_run_id: string | null;
+          calc_type: string;
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          flat_ids: string[] | null;
+          gst_applicable: boolean;
+          id: string;
+          is_active: boolean;
+          ledger_account_id: string;
+          name: string;
+          rate_paise: number | null;
+          rate_per_sqft: number | null;
+          rates_by_type: Json | null;
+          society_id: string;
+          sort_order: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          billed_run_id?: string | null;
+          calc_type: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          flat_ids?: string[] | null;
+          gst_applicable?: boolean;
+          id?: string;
+          is_active?: boolean;
+          ledger_account_id: string;
+          name: string;
+          rate_paise?: number | null;
+          rate_per_sqft?: number | null;
+          rates_by_type?: Json | null;
+          society_id: string;
+          sort_order?: number;
+          updated_at?: string;
+        };
+        Update: {
+          billed_run_id?: string | null;
+          calc_type?: string;
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          flat_ids?: string[] | null;
+          gst_applicable?: boolean;
+          id?: string;
+          is_active?: boolean;
+          ledger_account_id?: string;
+          name?: string;
+          rate_paise?: number | null;
+          rate_per_sqft?: number | null;
+          rates_by_type?: Json | null;
+          society_id?: string;
+          sort_order?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'charge_head_society_id_fkey';
+            columns: ['society_id'];
+            isOneToOne: false;
+            referencedRelation: 'society';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'charge_head_society_id_ledger_account_id_fkey';
+            columns: ['society_id', 'ledger_account_id'];
+            isOneToOne: false;
+            referencedRelation: 'ledger_account';
+            referencedColumns: ['society_id', 'id'];
+          },
+        ];
+      };
       device: {
         Row: {
           created_at: string;
@@ -141,6 +217,51 @@ export type Database = {
             columns: ['user_id'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      doc_counter: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          deleted_at: string | null;
+          doc_type: string;
+          financial_year: string;
+          id: string;
+          last_no: number;
+          society_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          doc_type: string;
+          financial_year: string;
+          id?: string;
+          last_no?: number;
+          society_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          deleted_at?: string | null;
+          doc_type?: string;
+          financial_year?: string;
+          id?: string;
+          last_no?: number;
+          society_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'doc_counter_society_id_fkey';
+            columns: ['society_id'];
+            isOneToOne: false;
+            referencedRelation: 'society';
             referencedColumns: ['id'];
           },
         ];
