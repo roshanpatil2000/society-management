@@ -15,6 +15,7 @@ import { params, router } from '@/test/router-mock';
 
 jest.mock('expo-router', () => require('@/test/router-mock').routerMock);
 jest.mock('@/features/society/api');
+jest.mock('@/features/accounts/api', () => ({ flatStatement: jest.fn().mockResolvedValue([]) }));
 const mocked = jest.mocked(api);
 
 const SID = 'gp-id';

@@ -25,6 +25,18 @@ describe('errorKey', () => {
     ).toBe('errors.tooMany');
   });
 
+  it('maps ledger refusals', () => {
+    expect(
+      errorKey({ message: 'opening_already_posted: opening balances were already posted' }),
+    ).toBe('errors.openingAlreadyPosted');
+    expect(errorKey({ message: 'books_not_empty: opening balances must be the first entry' })).toBe(
+      'errors.booksNotEmpty',
+    );
+    expect(errorKey({ message: 'period_locked: the books are closed up to 2026-03-31' })).toBe(
+      'errors.periodLocked',
+    );
+  });
+
   it('falls back to a generic message', () => {
     expect(errorKey({ message: 'something odd' })).toBe('errors.generic');
     expect(errorKey(new Error('boom'))).toBe('errors.generic');

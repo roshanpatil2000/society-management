@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Button, List, Text } from 'react-native-paper';
 
 import { Screen } from '@/components/Screen';
+import { FlatStatement } from '@/features/accounts/FlatStatement';
 import { Can } from '@/features/permissions/Can';
 import { useSessionStore } from '@/stores/session';
 
@@ -57,6 +58,7 @@ export function FlatDetailScreen() {
           {t('society.inviteTenant')}
         </Button>
       </Can>
+      <FlatStatement flatId={flat.id} />
     </Screen>
   );
 }

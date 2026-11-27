@@ -125,7 +125,10 @@
     "societyInactive": "ही सोसायटी सध्या सक्रिय नाही.",
     "alreadyInvited": "या व्यक्तीला आधीच प्रलंबित आमंत्रण आहे.",
     "alreadyMember": "ही व्यक्ती आधीच सदस्य आहे.",
-    "duplicateCode": "हा सोसायटी कोड आधीच वापरात आहे."
+    "duplicateCode": "हा सोसायटी कोड आधीच वापरात आहे.",
+    "openingAlreadyPosted": "या सोसायटीची प्रारंभिक शिल्लक आधीच नोंदवली आहे.",
+    "booksNotEmpty": "प्रारंभिक शिल्लक हिशोबातील पहिली नोंद असली पाहिजे.",
+    "periodLocked": "त्या तारखेसाठी हिशोब बंद आहेत."
   },
   "society": {
     "flats": "विंग आणि सदनिका",
@@ -160,5 +163,26 @@
     "owner": "मालक",
     "joint_owner": "संयुक्त मालक",
     "tenant": "भाडेकरू"
+  },
+  "accounts": {
+    "opening": "प्रारंभिक शिल्लक",
+    "openingHint": "Flats शीट (Wing, Flat No, Arrears, Advance) आणि Accounts शीट (Code, Debit, Credit) असलेली Excel फाइल वापरा, रक्कम रुपयांत. नावे आणि जमा समान असाव्यात; फरक Surplus / Deficit (3900) मध्ये टाका. हे पहिल्या बिलांपूर्वी एकदाच करायचे.",
+    "asOf": "या तारखेनुसार",
+    "invalidDate": "तारीख YYYY-MM-DD अशी लिहा, उदा. 2026-03-31.",
+    "ready": "{{flats}} सदनिकांची प्रारंभिक शिल्लक नोंदवण्यास तयार. नावे {{debit}}, जमा {{credit}}.",
+    "post": "प्रारंभिक शिल्लक नोंदवा",
+    "posted": "प्रारंभिक शिल्लक नोंदवली.",
+    "rowProblem": "{{sheet}} · ओळ {{row}} · {{field}}: {{message}}",
+    "sheet": {
+      "flats": "सदनिका",
+      "accounts": "खाती"
+    },
+    "statement": "विवरण",
+    "balanceDue": "थकबाकी {{amount}}",
+    "advance": "आगाऊ {{amount}}",
+    "noDues": "थकबाकी नाही",
+    "noEntries": "थकबाकी नाही आणि अजून नोंदी नाहीत.",
+    "due": "देय {{amount}}",
+    "credit": "जमा {{amount}}"
   }
 }

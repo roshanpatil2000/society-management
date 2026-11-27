@@ -125,7 +125,10 @@
     "societyInactive": "यह सोसाइटी अभी सक्रिय नहीं है.",
     "alreadyInvited": "इस व्यक्ति का आमंत्रण पहले से लंबित है.",
     "alreadyMember": "यह व्यक्ति पहले से सदस्य है.",
-    "duplicateCode": "यह सोसाइटी कोड पहले से लिया जा चुका है."
+    "duplicateCode": "यह सोसाइटी कोड पहले से लिया जा चुका है.",
+    "openingAlreadyPosted": "इस सोसाइटी का प्रारंभिक शेष पहले ही दर्ज किया जा चुका है.",
+    "booksNotEmpty": "प्रारंभिक शेष खातों की पहली प्रविष्टि होनी चाहिए.",
+    "periodLocked": "उस तारीख के लिए खाते बंद हैं."
   },
   "society": {
     "flats": "विंग और फ्लैट",
@@ -160,5 +163,26 @@
     "owner": "मालिक",
     "joint_owner": "संयुक्त मालिक",
     "tenant": "किरायेदार"
+  },
+  "accounts": {
+    "opening": "प्रारंभिक शेष",
+    "openingHint": "Flats शीट (Wing, Flat No, Arrears, Advance) और Accounts शीट (Code, Debit, Credit) वाली Excel फ़ाइल इस्तेमाल करें, राशि रुपयों में. नामे और जमा बराबर होने चाहिए; अंतर Surplus / Deficit (3900) में डालें. यह पहले बिलों से पहले एक बार किया जाता है.",
+    "asOf": "इस तारीख तक",
+    "invalidDate": "तारीख YYYY-MM-DD के रूप में लिखें, जैसे 2026-03-31.",
+    "ready": "{{flats}} फ्लैट के प्रारंभिक शेष दर्ज करने के लिए तैयार. नामे {{debit}}, जमा {{credit}}.",
+    "post": "प्रारंभिक शेष दर्ज करें",
+    "posted": "प्रारंभिक शेष दर्ज किए गए.",
+    "rowProblem": "{{sheet}} · पंक्ति {{row}} · {{field}}: {{message}}",
+    "sheet": {
+      "flats": "फ्लैट",
+      "accounts": "खाते"
+    },
+    "statement": "विवरण",
+    "balanceDue": "बकाया {{amount}}",
+    "advance": "अग्रिम {{amount}}",
+    "noDues": "कोई बकाया नहीं",
+    "noEntries": "कोई बकाया नहीं और अभी कोई प्रविष्टि नहीं.",
+    "due": "देय {{amount}}",
+    "credit": "जमा {{amount}}"
   }
 }
