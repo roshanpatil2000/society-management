@@ -1097,6 +1097,30 @@ export type Database = {
       };
     };
     Views: {
+      flat_ledger: {
+        Row: {
+          balance: number | null;
+          credit: number;
+          debit: number;
+          entry_date: string;
+          flat_id: string | null;
+          journal_entry_id: string;
+          narration: string;
+          society_id: string;
+          source_id: string | null;
+          source_type: string;
+        };
+        ComputedFields: never;
+        Relationships: [
+          {
+            foreignKeyName: 'journal_line_society_id_flat_id_fkey';
+            columns: ['society_id', 'flat_id'];
+            isOneToOne: false;
+            referencedRelation: 'flat';
+            referencedColumns: ['society_id', 'id'];
+          },
+        ];
+      };
       my_memberships: {
         Row: {
           membership_id: string;
@@ -1221,6 +1245,16 @@ export type Database = {
       platform_set_society_status: {
         Args: { p_society_id: string; p_status: string; p_trial_ends_at?: string };
         Returns: undefined;
+      };
+      post_opening_balances: {
+        Args: {
+          p_accounts: Json;
+          p_as_of: string;
+          p_dry_run?: boolean;
+          p_flats: Json;
+          p_society_id: string;
+        };
+        Returns: Json;
       };
       register_device: { Args: { p_platform: string; p_token: string }; Returns: undefined };
       request_setting_change: {
